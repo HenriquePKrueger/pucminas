@@ -7,18 +7,30 @@ public class main {
 
 		String s1;
 		
-		System.out.println("Digite a string:");
-		s1 = sc.nextLine();
+		System.out.println("Digite a string (Ctrl + D para sair):");
 
-		String s2 = new String(s1);
-
-		for (int i = (s1.length() - 1); i >= 0; i--) {
+		while (sc.hasNextLine()){
+			s1 = sc.nextLine();
 			
-			s2 += s1.charAt(i);
+			while (s1.isEmpty()){
+
+				System.out.println("A string nao pode estar vazia, digite novamente:");
+				s1 = sc.nextLine();	
+
+			}
+
+			String s2 = new String(s1);
+
+			for (int i = (s1.length() - 1); i >= 0; i--) {
+			
+				s2 += s1.charAt(i);
+
+			}
+
+			System.out.println("String espelhada:\n" + s2);
+			System.out.println("\nDigite a string (Ctrl + D para sair):");
 
 		}
-
-		System.out.println("String espelhada:\n"+s2);
 
 		sc.close();
 
