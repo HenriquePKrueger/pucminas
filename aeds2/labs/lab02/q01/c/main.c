@@ -41,6 +41,8 @@ int main() {
 	s3[k] = '\0';
 
 	printf("Strings combinadas:\n%s\n", s3);
+	
+	printf("Digite a primeira e a segunda string:\n");
 
 	}
 

@@ -35,7 +35,7 @@ public class main {
 
 		}
 
-		System.out.println("Strings combinadas:\n" + s3);
+		System.out.println("Strings combinadas: " + s3);
 
 	}
 }
