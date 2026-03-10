@@ -2,21 +2,21 @@ import java.util.*;
 
 public class Main {
 
-	public static int contMaiusculas(String str, int cont){
+	public static int contMaiusculas(String str, int i){
 		
-		if(cont >= str.length()){
+		if(i >= str.length()){
 
 			return 0;
 
 		}
 
-		if(str.charAt(cont) >= 'A' && str.charAt(cont) <= 'Z'){
+		if(str.charAt(i) >= 'A' && str.charAt(i) <= 'Z'){
 			
-			return 1 + contMaiusculas(str, cont + 1);
+			return 1 + contMaiusculas(str, i + 1);
 				
 		}
 			
-		return contMaiusculas(str, cont + 1);
+		return contMaiusculas(str, i + 1);
 
 	}
 
