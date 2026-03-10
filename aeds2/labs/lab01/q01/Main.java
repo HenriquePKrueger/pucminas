@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class main {
+public class Main {
 
 	public static int contMaiusculas(String s2){
 	
@@ -28,9 +28,7 @@ public class main {
  
 		while (!s1.equals("FIM")) {
 
-			int resultado = contMaiusculas(s1);
-
-			System.out.println(resultado);
+			System.out.println(contMaiusculas(s1));
 
 			s1 = sc.nextLine();
 
