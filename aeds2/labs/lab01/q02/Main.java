@@ -2,28 +2,24 @@ import java.util.*;
 
 public class Main {
 
-	public static int contMaiusculas(String str, int i, int maiusculas){
+	public static int contMaiusculas(String str, int cont){
+		
+		if(cont >= str.length()){
 
-		if ( i >= str.length() - 1){
-			
-			if (str.charAt(i) >= 'A' && str.charAt(i) <= 'Z') {
-
-				maiusculas++;
-
-			}
-
-			return maiusculas;
+			return 0;
 
 		}
-		else if (str.charAt(i) >= 'A' && str.charAt(i) <= 'Z'){
 
-			maiusculas++;
+		if(str.charAt(cont) >= 'A' && str.charAt(cont) <= 'Z'){
+			
+			return 1 + contMaiusculas(str, cont + 1);
 				
 		}
+		else{
+			
+			return contMaiusculas(str, cont + 1);
 
-		i++;
-
-		return contMaiusculas(str, i, maiusculas);
+		}
 
 	}
 
@@ -33,13 +29,9 @@ public class Main {
 	
 		String s1;
 
-		int indice = 0, result, maiusculas = 0;
-
 		s1 = sc.nextLine();
 
-		result = contMaiusculas(s1, indice, maiusculas);
-
-		System.out.println(result);
+		System.out.println(contMaiusculas(s1, 0));
 
 		sc.close();
 
