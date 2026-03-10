@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class  somaDoisInteiros{
+public class  SomaDoisInteiros{
 
 	public static void somar(int n1, int n2){
 	
