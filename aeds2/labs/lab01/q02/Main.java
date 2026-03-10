@@ -15,11 +15,8 @@ public class Main {
 			return 1 + contMaiusculas(str, cont + 1);
 				
 		}
-		else{
 			
-			return contMaiusculas(str, cont + 1);
-
-		}
+		return contMaiusculas(str, cont + 1);
 
 	}
 
@@ -27,12 +24,17 @@ public class Main {
 	
 		Scanner sc = new Scanner(System.in);
 	
-		String s1;
+		String str;
 
-		s1 = sc.nextLine();
+		str = sc.nextLine();
 
-		System.out.println(contMaiusculas(s1, 0));
+		while(!str.equals("FIM")){
 
+		System.out.println(contMaiusculas(str, 0));
+
+		str = sc.nextLine();
+
+		}
 		sc.close();
 
 	} 
