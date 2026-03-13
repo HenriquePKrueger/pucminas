@@ -45,62 +45,6 @@ public class DAO {
 		return status;
 	}
 	
-	public boolean inserirPessoa(Pessoa pessoa) {
-		boolean status = false;
-		try {  
-			Statement st = conexao.createStatement();
-			//st.executeUpdate("INSERT INTO usuario (codigo, login)" + "VALUES ("+usuario.getCodigo()+ ", '" + usuario.getLogin() + "');");
-			st.executeUpdate("INSERT INTO pessoa (nome) VALUES ('" + pessoa.getNome() + "')");
-			st.close();
-			status = true;
-		} catch (SQLException u) {  
-			throw new RuntimeException(u);
-		}
-		return status;
-	}
-	
-	public boolean atualizarPessoa(String nomeAntigo, Pessoa pessoaAtualizada) {
-		boolean status;
-		try {  
-			Statement st = conexao.createStatement();
-			String sql = "UPDATE pessoa SET nome = '" + pessoaAtualizada.getNome() + "' WHERE nome = '" + nomeAntigo + "'";
-			
-			int linhasAlteradas = st.executeUpdate(sql);
-			
-			if(linhasAlteradas == 0) {
-				
-				status = false;
-				
-			}
-			else {
-				
-				status = true;
-				
-			}
-			
-			st.close();
-			
-		} catch (SQLException u) { 
-			
-			throw new RuntimeException(u);
-		}
-		return status;
-	}
-
-	public boolean excluirPessoa(String nome) {
-		boolean status = false;
-		try {  
-			Statement st = conexao.createStatement();
-			st.executeUpdate("DELETE FROM pessoa WHERE nome = '" + nome + "'");
-			st.close();
-			status = true;
-		} catch (SQLException u) {  
-			throw new RuntimeException(u);
-		}
-		return status;
-	}
-	
-	
 	public Pessoa[] getPessoas() {
 		Pessoa[] pessoas = null;
 		
@@ -121,6 +65,74 @@ public class DAO {
 			System.err.println(e.getMessage());
 		}
 		return pessoas;
+	}
+	
+	public boolean inserirPessoa(Pessoa pessoa) {
+		boolean status = false;
+		try {  
+			Statement st = conexao.createStatement();
+			st.executeUpdate("INSERT INTO pessoa (nome) VALUES ('" + pessoa.getNome() + "')");
+			st.close();
+			status = true;
+		} catch (SQLException u) {  
+			throw new RuntimeException(u);
+		}
+		return status;
+	}
+	
+	public boolean excluirPessoa(String nome) {
+
+		try {  
+			Statement st = conexao.createStatement();
+			String sql = "DELETE FROM pessoa WHERE nome = '" + nome + "'";
+			
+			int linhasAlteradas = st.executeUpdate(sql);
+			
+			if(linhasAlteradas == 0) {
+				
+				st.close();
+				return false;
+				
+			}
+			else {
+				
+				st.close();
+				return true;
+				
+			}
+
+		} catch (SQLException u) {  
+			throw new RuntimeException(u);
+		}
+		
+	}
+	
+	public boolean atualizarPessoa(String nomeAntigo, Pessoa pessoaAtualizada) {
+
+		try {  
+			Statement st = conexao.createStatement();
+			String sql = "UPDATE pessoa SET nome = '" + pessoaAtualizada.getNome() + "' WHERE nome = '" + nomeAntigo + "'";
+			
+			int linhasAlteradas = st.executeUpdate(sql);
+			
+			if(linhasAlteradas == 0) {
+				
+				st.close();
+				return false;
+				
+			}
+			else {
+				
+				st.close();
+				return true;
+				
+			}
+			
+		} catch (SQLException u) { 
+			
+			throw new RuntimeException(u);
+		}
+
 	}
 	
 }

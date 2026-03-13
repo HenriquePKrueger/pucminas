@@ -16,6 +16,7 @@ public class Principal {
 		
 		while(sair != true) {
 			
+			System.out.println();
 			System.out.println(" ==== Menu (Digite o número da opção que deseja para prosseguir) === ");
 			System.out.println("1 - Listar");
 			System.out.println("2 - Inserir");
@@ -30,7 +31,7 @@ public class Principal {
 			case 1:
 				System.out.println("Listas de pessoas no banco de dados:");		
 				for(int i = 0; i < dao.getPessoas().length; i++) {
-					System.out.println((i + 1) + " - "+ dao.getPessoas()[i].toString());
+					System.out.println(dao.getPessoas()[i].toString());
 				}
 				
 				break;
@@ -49,27 +50,35 @@ public class Principal {
 				System.out.print("Digite o nome que sera excluido:");
 				String excluirNome = sc.nextLine();
 				System.out.print("Deseja mesmo excluir '" + excluirNome + "' do banco de dados (S/N)?");
-				String confirmacao = sc.nextLine();
+				
+				String confirme = sc.nextLine().toUpperCase();
+				
+				while(!confirme.equals("S") && !confirme.equals("N")){
 					
-					switch(confirmacao.toUpperCase()) {
-						case "S":
-							if(dao.excluirPessoa(excluirNome) == true) {
-								System.out.println("Nome excluido com sucesso");
-							}
-						break;
-							
-						case "N":
-							
-							System.out.print("Exclusão cancelada, voltando para o menu...");
-							
-						break;
+					System.out.println("Opcao invalida, digite S/N");
+					confirme = sc.nextLine().toUpperCase();
+					
+				};
 						
-						default:
+					if(confirme.equals("S")){
+						
+						if(dao.excluirPessoa(excluirNome) == true) {
+							System.out.println("Nome excluido com sucesso");
+						}
+						else{
+						
+							System.out.println("Nao foi possivel excluir '" + excluirNome + "', nome nao encontrado.");
 							
-							System.out.println("Opcao invalida, digite S/N");
+						}
+						
 					}
+					else {
+						
+						System.out.print("Exclusão cancelada, voltando para o menu...");
+						
+					};
 					
-				break;
+			break;
 					
 			case 4:
 				System.out.print("Digite o nome que sera atualizado no banco de dados:");
@@ -87,7 +96,7 @@ public class Principal {
 				}
 				else {
 					
-					System.out.println("Não foi possível encontrar'" + nomeAntigo + "'no banco de dados, tente novamente");
+					System.out.println("Não foi possível encontrar '" + nomeAntigo + "' no banco de dados, tente novamente");
 					
 				}
 				
@@ -97,8 +106,6 @@ public class Principal {
 				System.out.println("Deseja sair do programa(S/N)?");
 				
 				String confirm = sc.nextLine();
-				
-				
 				
 				switch(confirm.toUpperCase()){
 					case "N":
@@ -116,9 +123,8 @@ public class Principal {
 			default:
 				
 				System.out.println("O numero digitado nao eh valido");
+				
 			};
-			
-			System.out.println();
 			
 		};
 			
