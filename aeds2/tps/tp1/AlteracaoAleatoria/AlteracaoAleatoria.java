@@ -2,16 +2,12 @@ import java.util.Random;
 
 public class AlteracaoAleatoria{
 
-	static char letraSort;
-	static char letraTrocar;
-
-	public static void sortAleatorios(Random gerador){
+	public static String alterar(String str, Random gerador){
+		String strSaida = "";
+		char letraSort;
+		char letraTrocar;
 		letraSort = ((char)('a' + (Math.abs(gerador.nextInt()) % 26)));
 		letraTrocar = ((char)('a' + (Math.abs(gerador.nextInt()) % 26)));
-	}
-
-	public static String alterar(String str){
-		String strSaida = "";
 
 		for(int i = 0; i < str.length(); i++){
 			if(str.charAt(i) == letraSort){
@@ -28,9 +24,9 @@ public class AlteracaoAleatoria{
 		String str = MyIO.readLine();
 		Random gerador = new Random();
 		gerador.setSeed(4);
+
 		while(!str.equals("FIM")){
-			sortAleatorios(gerador);
-			MyIO.println(alterar(str));
+			MyIO.println(alterar(str, gerador));
 			str = MyIO.readLine();
 		}
 	}
