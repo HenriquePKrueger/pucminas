@@ -94,7 +94,7 @@ public class ProdutoService {
 			umProduto += "\t</div>";		
 		} else if (tipo == FORM_DETAIL) {
 			umProduto += "\t<section class=\"card shadow-sm mb-4\">";
-			umProduto += "\t\t<div class=\"card-header bg-info text-white\">";
+			umProduto += "\t\t<div class=\"card-header bg-primary text-white\">";
 			umProduto += "\t\t\t<h5 class=\"mb-0\"><i class=\"bi bi-search\"></i> Detalhar Produto (ID " + produto.getID() + ")</h5>";
 			umProduto += "\t\t</div>";
 			umProduto += "\t\t<div class=\"card-body\">";
@@ -158,8 +158,8 @@ public class ProdutoService {
 			response.status(404);
 		}
 			
-		makeForm();
-		return form.replaceFirst("<input type=\"hidden\" id=\"msg\" name=\"msg\" value=\"\">", "<input type=\"hidden\" id=\"msg\" name=\"msg\" value=\""+ resp +"\">");
+		response.redirect("/produto/list/1");
+		return null;
 	}
 
 	public Object get(Request request, Response response) {
