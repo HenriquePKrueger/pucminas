@@ -27,7 +27,7 @@ public class ProdutoDAO extends DAO {
 	public boolean insert(Produto produto) {
 		boolean status = false;
 		try {
-			String sql = "INSERT INTO produto (descricao, preco, quantidade, datafabricacao, datavalidade) "
+		String sql = "INSERT INTO produto (descricao, preco, quantidade, datafabricacao, datavalidade) "
 		               + "VALUES ('" + produto.getDescricao() + "', "
 		               + produto.getPreco() + ", " + produto.getQuantidade() + ", ?, ?);";
 			PreparedStatement st = conexao.prepareStatement(sql);

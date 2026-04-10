@@ -11,7 +11,7 @@ public class Aplicacao {
     public static void main(String[] args) {
         port(6789);
         
-        staticFiles.location("/public");
+        staticFiles.location("/");
         
         post("/produto/insert", (request, response) -> produtoService.insert(request, response));
 

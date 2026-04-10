@@ -39,7 +39,7 @@ public class ProdutoService {
 
 	
 	public void makeForm(int tipo, Produto produto, int orderBy) {
-		String nomeArquivo = "form.html";
+		String nomeArquivo = "src/main/resources/form.html";
 		form = "";
 		try{
 			Scanner entrada = new Scanner(new File(nomeArquivo));
@@ -158,7 +158,8 @@ public class ProdutoService {
 		String descricao = request.queryParams("descricao");
 		float preco = Float.parseFloat(request.queryParams("preco"));
 		int quantidade = Integer.parseInt(request.queryParams("quantidade"));
-		LocalDateTime dataFabricacao = LocalDateTime.parse(request.queryParams("dataFabricacao"));
+		String dataFabStr = request.queryParams("dataFabricacao");
+		LocalDateTime dataFabricacao = LocalDate.parse(dataFabStr).atStartOfDay();
 		LocalDate dataValidade = LocalDate.parse(request.queryParams("dataValidade"));
 		
 		String resp = "";

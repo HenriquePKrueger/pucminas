@@ -73,16 +73,21 @@ public class Produto {
 
 	public void setDataFabricacao(LocalDateTime dataFabricacao) {
 		// Pega a Data Atual
-		LocalDateTime agora = LocalDateTime.now();
-		// Garante que a data de fabricação não pode ser futura
-		if (agora.compareTo(dataFabricacao) >= 0)
-			this.dataFabricacao = dataFabricacao;
+		this.dataFabricacao = dataFabricacao;
+		if(dataFabricacao != null) {
+			LocalDateTime agora = LocalDateTime.now();
+			if (dataFabricacao.isAfter(agora))
+				this.dataFabricacao = agora;
+		}
 	}
 
 	public void setDataValidade(LocalDate dataValidade) {
 		// a data de fabricação deve ser anterior é data de validade.
-		if (getDataFabricacao().isBefore(dataValidade.atStartOfDay()))
-			this.dataValidade = dataValidade;
+		this.dataValidade = dataValidade;
+		if (this.dataFabricacao != null && dataValidade != null)
+			if (!this.dataFabricacao.isBefore(dataValidade.atStartOfDay())) {
+	            this.dataValidade = this.dataFabricacao.toLocalDate().plusDays(1);
+			}
 	}
 
 	public boolean emValidade() {
