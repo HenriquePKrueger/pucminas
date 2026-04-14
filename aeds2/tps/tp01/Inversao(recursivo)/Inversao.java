@@ -2,11 +2,11 @@ import java.util.Scanner;
 
 public class Inversao{
 	public static String inverter(String entrada, String saida, int cont){
-		if(cont == entrada.length()){
+		if(cont == entrada.length()){ //Se chegou no final da string retorna saida
 			return saida;
 		}
 		else{
-			saida += entrada.charAt(entrada.length() - (cont + 1));
+			saida += entrada.charAt(entrada.length() - (cont + 1)); //Cria a string saida adicionando os elementos da "entrada" de trás para frente
 			return inverter(entrada, saida, cont + 1);
 		}
 	}

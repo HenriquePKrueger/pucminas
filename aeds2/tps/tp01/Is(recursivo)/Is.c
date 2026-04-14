@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-int x1(char *entrada, int cont){
+int x1(char *entrada, int cont){ //Verifica se é só vogal
 	char c = entrada[cont];
 	if(c == '\0' || c == '\n'){
 		cont = 0;
@@ -17,7 +17,7 @@ int x1(char *entrada, int cont){
 	}
 }
 
-int x2(char *entrada, int cont){
+int x2(char *entrada, int cont){ //verifica se é só consoante
 	char c = entrada[cont];
 	if(c == '\0' || c == '\n'){
 		cont = 0;
@@ -34,7 +34,7 @@ int x2(char *entrada, int cont){
 	}
 }
 
-int x3(char *entrada, int cont){
+int x3(char *entrada, int cont){ //Verifica se é número inteiro
 	char c = entrada[cont];
 	if(c == '\0' || c == '\n'){
 		cont = 0;
@@ -51,7 +51,7 @@ int x3(char *entrada, int cont){
 	}
 }
 
-int x4(char *entrada, int cont){
+int x4(char *entrada, int cont){ //Verifica se é número real
 	char c = entrada[cont];
 	if(c == '\0' || c == '\n'){
 		cont = 0;
@@ -76,7 +76,7 @@ int main(){
 	while(entrada[0] != 'F' || entrada[1] != 'I' || entrada[2] != 'M'){
 		int i = 0;
 		while(entrada[i] != '\0' && entrada[i] != '\n'){
-			if(entrada[i] >= 'A' && entrada[i] <= 'Z'){
+			if(entrada[i] >= 'A' && entrada[i] <= 'Z'){ //Converte letras maiúsculas em minúsculas
 				entrada[i] = (entrada[i] + 32);
 			}
 			i++;

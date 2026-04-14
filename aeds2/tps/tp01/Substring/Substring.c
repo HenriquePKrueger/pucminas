@@ -1,41 +1,34 @@
 #include <stdio.h>
-int substring(char entrada[100]){
-	char saida[100];
-	int verificar;
-	int i = 1, j = 0, l, k;
-
-	saida[0] = entrada[0];
-
-	while(entrada[i] != '\0' && entrada[i] != '\n'){
-		k = l;
-		while(k >= j){
-			if(entrada[i] == saida[k]){
-				verificar = 0;
-				k = 0;
-			}
-			else{
-				verificar = 1;
-			}
-			k--;
-		}
-		if(verificar == 1){
-			j++;
-			saida[l] = entrada[i];
-			l++;
-		}
-		else{
-			l = i;
-		}
-		i++;
-	}
-	return j;
+ 
+int substring(char *str) {
+	int tam = 0;
+        int i = 0;
+        int maior = 0;
+        int novaStr = 0;
+        int j;
+ 
+        while (str[i] != '\0' && str[i] != '\n') {
+                for (j = novaStr; j < i; j++) {
+                        if (str[j] == str[i]) { //Se j for igual a i começamos a contar uma nova substring
+                                novaStr = j + 1;
+                                j = i;
+                        }
+                }
+                tam = i - novaStr + 1; //Armazenamos o tamanho da substring
+                if (tam > maior) //Trocamos se achar uma substring maior que a anterior
+                maior = tam;
+                i++;
+        }
+        return maior;
+}
+ 
+int main() {
+        char str[100];
+        fgets(str, 100, stdin);
+ 
+       	while (!(str[0] == 'F' && str[1] == 'I' && str[2] == 'M')) {
+                printf("%d\n", substring(str));
+                fgets(str, 100, stdin);
+        }
 }
 
-int main(){
-	char entrada[100];
-	fgets(entrada, 100, stdin);
-	while(entrada[0] != 'F' && entrada[1] != 'I' && entrada[2] != 'M'){
-		printf("%d\n", substring(entrada));
-		fgets(entrada, 100, stdin);
-	}
-}

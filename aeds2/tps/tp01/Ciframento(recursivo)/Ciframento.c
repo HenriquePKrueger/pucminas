@@ -3,10 +3,10 @@
 char* codificar(char entrada[], char saida[], int cont){
 	if(entrada[cont] == '\0' || entrada[cont] == '\n'){
 		saida[cont] = '\0';
-		return saida;
+		return saida; //Retorna a string cifrada quando chegar no final
 	}
 	else{
-		saida[cont] = (entrada[cont] + 3);
+		saida[cont] = (entrada[cont] + 3); //Pega o caracter na posiçao cont + 3 e coloca na string saida
 		return codificar(entrada, saida, cont + 1);
 	}
 }

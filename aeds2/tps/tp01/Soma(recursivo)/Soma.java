@@ -2,10 +2,10 @@ import java.util.Scanner;
 
 public class Soma{
 	public static int somarNumeros(String entrada, int resultado, int i){
-		if(i == entrada.length()){
+		if(i == entrada.length()){ //Quando chega no final retorna o resultado
 			return resultado;
 		}
-		else{
+		else{ //Soma os caracteres(números) na variável resultado
 			resultado += (entrada.charAt(i) - '0'); 
 			return somarNumeros(entrada, resultado, i + 1);
 		}
@@ -16,12 +16,9 @@ public class Soma{
 		int resultado = 0;
 		int i = 0;
 
-		String entrada = sc.nextLine();
-		while(!entrada.equals("FIM")){
+		while(sc.hasNextLine()){
+			String entrada = sc.nextLine();
 			System.out.println(somarNumeros(entrada, resultado, i));
-			entrada = sc.nextLine();
 		}
-
-		sc.close();
 	}
 }

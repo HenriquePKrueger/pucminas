@@ -2,19 +2,19 @@ import java.util.Scanner;
 
 public class Validacao{
 	public static boolean verificar(String senha, int[] condicoes){
-		if(senha.length() >= 8){
+		if(senha.length() >= 8){ //Verifica se a senha tem 8 dígitos ou mais
 			for(int i = 0; i < senha.length(); i++){
 				char c = senha.charAt(i);
-				if(c >= 'A' && c <= 'Z'){
+				if(c >= 'A' && c <= 'Z'){ //Verifica se tem letra maiúscula
 					condicoes[0] = 1;
 				}
-				else if(c >= 'a' && c <= 'z'){
+				else if(c >= 'a' && c <= 'z'){ //Verifica se tem letra minúscula
 					condicoes[1] = 1;
 				}
-				else if(c >= '0' && c <= '9'){
+				else if(c >= '0' && c <= '9'){ //Verifica se tem número
 					condicoes[2] = 1;
 				}
-				else{
+				else{ // Verifica se é caracter especial
 					condicoes[3] = 1;
 				}
 			}

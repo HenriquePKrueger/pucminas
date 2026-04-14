@@ -9,7 +9,7 @@ int verificar(char original[100], char anagrama[100], int j, int k){
 		for(int i = 0; i <= j; i++){
 			verificador = 0;
 			for(int l = 0; l <= k; l++){
-				if(original[i] == anagrama[l]){
+				if(original[i] == anagrama[l]){ //Verifica se todas as letras no possível anagrama estão presentes na string original
 					verificador = 1;
 				}
 			}
@@ -31,7 +31,7 @@ int separarStr(char entrada[100]){
 
 	while(entrada[i] != '\0' && entrada[i] != '\n'){
 		if(entrada[i] != ' ' && cheio == 0){
-			if(entrada[i] >= 'A' && entrada[i] <= 'Z'){
+			if(entrada[i] >= 'A' && entrada[i] <= 'Z'){ //Se for letra maiúscula, converte para minúscula
 				original[j] = (entrada[i] + 32);
 			}
 			else{
@@ -39,10 +39,10 @@ int separarStr(char entrada[100]){
 			}
 			j++;
 		}
-		else if(entrada[i] == ' '){
+		else if(entrada[i] == ' '){ //Se o caractere for um espaço a primeira string já foi lida
 			cheio++;
 		}
-		else if(entrada[i] != ' ' && entrada[i] != '-'){
+		else if(entrada[i] != ' ' && entrada[i] != '-'){ //Converte a segunda string para minúsculo
 			if(entrada[i] >= 'A' && entrada[i] <= 'Z'){
 				anagrama[k] = (entrada[i] + 32);
 			}
@@ -61,7 +61,7 @@ int main(){
 	fgets(entrada, 100, stdin);
 
 	while((entrada[0] != 'F') || (entrada[1] != 'I') || (entrada[2] != 'M')){
-	printf("%s\n", (separarStr(entrada) == 1 ? "SIM" : "NÃO"));
+	printf("%s\n", (separarStr(entrada) == 1 ? "SIM" : "NAO")); //Operador tenário para deixar o código mais limpo
 	fgets(entrada, 100, stdin);
 	}
 }
