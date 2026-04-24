@@ -4,8 +4,8 @@ import java.util.Scanner;
 public class Principal{
 	public static void main(String[] args){
 		//testes
-		Restaurante r1 = Restaurante.parseRestaurante("1,Classic Palace Works,Zurich,168,3.9,churrasco;internacional,$$,11:00-20:00,2018-03-31,false");		
-
+		Restaurante r1 = Restaurante.parseRestaurante("1,Classic Palace Works,Zurich,168,3.9,churrasco;internacional;teste,$$,11:00-20:00,2018-03-31,false");		
+		System.out.println(r1.formatar());
 		/*
 		* Data d1 = Data.parseData("2026-11-12"); //Chama o método parseData antes de criar o objeto
 		* String dataFormat = d1.formatar();
@@ -31,7 +31,7 @@ class Restaurante{
 	private	Data dataAbertura;
 	private	boolean aberto;
 	
-	public Restaurante(DadosRestaurante dados){
+	public Restaurante(DadosRestaurante dados){//O construtor recebe os dados vindo do DTO e atribui aos dados do novo objeto criado
 		this.id = dados.id;
 		this.nome = dados.nome;
 		this.cidade = dados.cidade;
@@ -44,9 +44,9 @@ class Restaurante{
 		this.dataAbertura = dados.dataAbertura;
 		this.aberto = dados.aberto;
 	}
-
+		
 	public static Restaurante parseRestaurante(String strRestaurante){
-		DadosRestaurante d = new DadosRestaurante();//Instancia o conjunto de dados do objeto restaurante atual
+		DadosRestaurante d = new DadosRestaurante();//Cria um novo conjunto de dados para o objeto restaurante atual
 		String[] arrDados = new String[10];//Cria um array de string para que os dados possam ser inseridos de forma mais limpa
 		String temp = "";
 		int indice = 0;
@@ -82,15 +82,7 @@ class Restaurante{
 		}
 		hrSeparada[indice] = temp;
 		
-
-		for(int i = 0; i < 10; i++){//Debugar
-			System.out.println(arrDados[i]);
-		}
-		
-		Hora hr1 = Hora.parseHora(hrSeparada[0]);
-		Hora hr2 = Hora.parseHora(hrSeparada[1]);
-		Data dtAbertura = Data.parseData(arrDados[8]);
-		
+		//Define o valor das váriáveis na classe "DadosRestaurante"
 		d.id = Integer.parseInt(arrDados[0]);
 		d.nome = arrDados[1];
 		d.cidade = arrDados[2];
@@ -98,19 +90,29 @@ class Restaurante{
 		d.avaliacao = Double.parseDouble(arrDados[4]);
 		d.parseTiposCozinha(arrDados[5]);
 		d.faixaPreco = arrDados[6].length();
+		
+		d.horarioAbertura = Hora.parseHora(hrSeparada[0]);
+		d.horarioFechamento = Hora.parseHora(hrSeparada[1]);
 
-		d.horarioAbertura = hr1;
-		d.horarioFechamento = hr2;
+		d.dataAbertura = Data.parseData(arrDados[8]);
 
-		d.dataAbertura = dtAbertura;
 		d.aberto = Boolean.parseBoolean(arrDados[9]);
 		
-		System.out.println(hr1.formatar());
-		System.out.println(hr2.formatar());
-		System.out.println(dtAbertura.formatar());
-		
-		return new Restaurante(d);
+		return new Restaurante(d);//Cria o novo objeto enviando o DTO como parâmetro para o construtor
 	}
+	
+	public String formatar(){
+		String strTiposCozinha = "";
+		
+		for(int i = 0; i < this.tiposCozinha.length; i++){//Pega os elementos do array "tiposCozinha" e monta uma única string
+			strTiposCozinha += this.tiposCozinha[i];
+			if(i != (tiposCozinha.length - 1)){
+				strTiposCozinha += ",";
+			}
+		}
+		
+		return String.format("[%d ## %s ## %s ## %d ## %.1f ## %s ## %d ## %s-%s ## %s ## %b]", this.id, this.nome, this.cidade, this.capacidade, this.avaliacao, strTiposCozinha, this.faixaPreco, this.horarioAbertura.formatar(), this.horarioFechamento.formatar(), this.dataAbertura.formatar(), this.aberto);
+	}	
 }
 
 //Classes Componentes
@@ -178,7 +180,7 @@ class Data{
 		return new Data(Integer.parseInt(ano), Integer.parseInt(mes), Integer.parseInt(dia));//Converte todas as strings em inteiros
 	}
 
-	//Envia a data formatada para a main
+	//Envia a data formatada
 	public String formatar(){
 		return String.format("%02d/%02d/%d", this.dia, this.mes, this.ano);
 	}
@@ -225,5 +227,6 @@ class DadosRestaurante{
 				temp += c;
 			}
 		}
+		this.tiposCozinha[indice] = temp;
 	}
 }
