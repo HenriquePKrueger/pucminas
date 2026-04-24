@@ -6,14 +6,9 @@ public class Principal{
 		//testes
 		Restaurante r1 = Restaurante.parseRestaurante("1,Classic Palace Works,Zurich,168,3.9,churrasco;internacional;teste,$$,11:00-20:00,2018-03-31,false");		
 		System.out.println(r1.formatar());
-		/*
-		* Data d1 = Data.parseData("2026-11-12"); //Chama o método parseData antes de criar o objeto
-		* String dataFormat = d1.formatar();
-		* System.out.println(dataFormat);
-
-		* Hora h1 = Hora.parseHora("11:00");
-		* System.out.println(h1.formatar());
-		*/
+		
+		Restaurante r2 = Restaurante.parseRestaurante("2,Sunny Garden Studio,Sydney,133,4.8,frutos do mar;mediterranea,$,12:00-20:00,2021-03-07,false");
+		System.out.println(r2.formatar());
 	}
 }
 
@@ -103,6 +98,7 @@ class Restaurante{
 	
 	public String formatar(){
 		String strTiposCozinha = "";
+		String strFaixaPreco = "";
 		
 		for(int i = 0; i < this.tiposCozinha.length; i++){//Pega os elementos do array "tiposCozinha" e monta uma única string
 			strTiposCozinha += this.tiposCozinha[i];
@@ -110,8 +106,11 @@ class Restaurante{
 				strTiposCozinha += ",";
 			}
 		}
+		for(int i = 0; i < this.faixaPreco; i++){//Monta a String referente à "faixaPreco"
+			strFaixaPreco += "$";
+		}
 		
-		return String.format("[%d ## %s ## %s ## %d ## %.1f ## %s ## %d ## %s-%s ## %s ## %b]", this.id, this.nome, this.cidade, this.capacidade, this.avaliacao, strTiposCozinha, this.faixaPreco, this.horarioAbertura.formatar(), this.horarioFechamento.formatar(), this.dataAbertura.formatar(), this.aberto);
+		return String.format("[%d ## %s ## %s ## %d ## %.1f ## [%s] ## %s ## %s-%s ## %s ## %b]", this.id, this.nome, this.cidade, this.capacidade, this.avaliacao, strTiposCozinha, strFaixaPreco, this.horarioAbertura.formatar(), this.horarioFechamento.formatar(), this.dataAbertura.formatar(), this.aberto);
 	}	
 }
 
