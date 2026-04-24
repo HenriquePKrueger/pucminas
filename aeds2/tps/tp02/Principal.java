@@ -1,14 +1,49 @@
 import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 
 public class Principal{
 	public static void main(String[] args){
 		//testes
-		Restaurante r1 = Restaurante.parseRestaurante("1,Classic Palace Works,Zurich,168,3.9,churrasco;internacional;teste,$$,11:00-20:00,2018-03-31,false");		
-		System.out.println(r1.formatar());
-		
-		Restaurante r2 = Restaurante.parseRestaurante("2,Sunny Garden Studio,Sydney,133,4.8,frutos do mar;mediterranea,$,12:00-20:00,2021-03-07,false");
-		System.out.println(r2.formatar());
+		/*Restaurante r1 = Restaurante.parseRestaurante("1,Classic Palace Works,Zurich,168,3.9,churrasco;internacional;teste,$$,11:00-20:00,2018-03-31,false");		
+		*System.out.println(r1.formatar());
+		*
+		*Restaurante r2 = Restaurante.parseRestaurante("2,Sunny Garden Studio,Sydney,133,4.8,frutos do mar;mediterranea,$,12:00-20:00,2021-03-07,false");
+		*System.out.println(r2.formatar());
+		*/
+		ColecaoRestaurantes.lerCsv();
+	}
+}
+
+//Gerenciador
+class ColecaoRestaurantes{
+	private int tamanho;
+	private Restaurante[] restaurantes;
+	
+	public static ColecaoRestaurantes lerCsv(){//Cria uma nova coleção com base no arquivo indicado
+		ColecaoRestaurantes c = new ColecaoRestaurantes();
+		c.lerCsv("/tmp/restaurantes.csv");
+		return c;
+	}
+
+	public void lerCsv(String path){
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(path));
+			String linha;
+			br.readLine();//Descartar a primeira linhado CSV
+			
+			int cont = 0;			
+
+			while((linha = br.readLine()) != null){
+				Restaurante r = Restaurante.parseRestaurante(linha);
+				cont++;
+			}
+			System.out.println(cont);
+		}
+		catch(Exception e){
+			System.out.println("Erro: " + e.getMessage());
+		}
 	}
 }
 
