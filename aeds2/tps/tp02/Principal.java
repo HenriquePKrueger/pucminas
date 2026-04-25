@@ -5,14 +5,13 @@ import java.io.FileReader;
 
 public class Principal{
 	public static void main(String[] args){
-		//testes
-		/*Restaurante r1 = Restaurante.parseRestaurante("1,Classic Palace Works,Zurich,168,3.9,churrasco;internacional;teste,$$,11:00-20:00,2018-03-31,false");		
-		*System.out.println(r1.formatar());
-		*
-		*Restaurante r2 = Restaurante.parseRestaurante("2,Sunny Garden Studio,Sydney,133,4.8,frutos do mar;mediterranea,$,12:00-20:00,2021-03-07,false");
-		*System.out.println(r2.formatar());
-		*/
-		ColecaoRestaurantes.lerCsv();
+		ColecaoRestaurantes c = ColecaoRestaurantes.lerCsv();
+		System.out.println(c.getTamanho());
+		
+		Restaurante[] arrRest = c.getRestaurantes();
+		for(int i = 0; i < c.getTamanho(); i++){
+			System.out.println(arrRest[i].formatar());
+		}
 	}
 }
 
@@ -28,26 +27,49 @@ class ColecaoRestaurantes{
 	}
 
 	public void lerCsv(String path){
+		int qnt = 0;
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(path));
-			String linha;
-			br.readLine();//Descartar a primeira linhado CSV
+			br.readLine();//Descartar a primeira linha do CSV
 			
-			int cont = 0;			
-
-			while((linha = br.readLine()) != null){
-				Restaurante r = Restaurante.parseRestaurante(linha);
-				cont++;
+			while(br.readLine() != null){//Verifica o número de restaurantes no arquivo
+				qnt++;
 			}
-			System.out.println(cont);
+			this.tamanho = qnt;
+
+			br.close();
 		}
 		catch(Exception e){
 			System.out.println("Erro: " + e.getMessage());
 		}
+
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(path)); //Lê o arquivo novamente, desta vez preenchendo o array
+			br.readLine();
+
+			restaurantes = new Restaurante[qnt];//Cria o array com o número certo de restaurantes que serão inseridos
+
+			for(int i = 0; i < qnt; i++){//Monta o array de restaurantes
+				restaurantes[i] = Restaurante.parseRestaurante(br.readLine());
+			}
+
+			br.close();		
+		}
+		catch(Exception e){
+			System.out.println("Erro: " + e.getMessage());
+		}	
+	}
+	
+	public Restaurante[] getRestaurantes(){
+		return this.restaurantes;//Retorna o array todo, quem o chamou deve criar um loop para ver cada elemento
+	}
+
+	public int getTamanho(){
+		return tamanho;
 	}
 }
 
-//Classe Composta/Principal
+//Classe Principal
 class Restaurante{
 	private int id;
 	private String nome;
@@ -128,7 +150,7 @@ class Restaurante{
 
 		d.aberto = Boolean.parseBoolean(arrDados[9]);
 		
-		return new Restaurante(d);//Cria o novo objeto enviando o DTO como parâmetro para o construtor
+		return new Restaurante(d);//Cria o novo objeto enviando a classe auxiliar como parâmetro para o construtor
 	}
 	
 	public String formatar(){
@@ -220,7 +242,7 @@ class Data{
 	}
 }
 
-//Classe DTO(Data Transfer Object)
+//Classe auxiliar(manter o código mais limpo)
 class DadosRestaurante{
 	public int id;
 	public String nome;
