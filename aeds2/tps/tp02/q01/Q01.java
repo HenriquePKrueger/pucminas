@@ -2,7 +2,7 @@ import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
-public class Principal{
+public class Q01{
 	public static void main(String[] args){
 		Scanner sc = new Scanner(System.in);
 		ColecaoRestaurantes c = ColecaoRestaurantes.lerCsv();
