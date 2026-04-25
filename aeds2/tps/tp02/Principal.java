@@ -2,15 +2,22 @@ import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
-
 public class Principal{
 	public static void main(String[] args){
+		Scanner sc = new Scanner(System.in);
 		ColecaoRestaurantes c = ColecaoRestaurantes.lerCsv();
-		System.out.println(c.getTamanho());
-		
-		Restaurante[] arrRest = c.getRestaurantes();
-		for(int i = 0; i < c.getTamanho(); i++){
-			System.out.println(arrRest[i].formatar());
+		String entrada = sc.nextLine();
+		while(!entrada.equals("-1")){//Lê os números da entrada até o -1
+			int id = Integer.parseInt(entrada);
+			c.setIdRestaurante(id);
+			Restaurante Encontrado = c.getRestaurantes();
+			if(Encontrado != null){
+				System.out.println(Encontrado.formatar());
+			}
+			else{
+				System.out.println("ID não encontrado!");
+			}
+			entrada = sc.nextLine();
 		}
 	}
 }
@@ -19,6 +26,7 @@ public class Principal{
 class ColecaoRestaurantes{
 	private int tamanho;
 	private Restaurante[] restaurantes;
+	private int id;//Variável que armazena o id desejado pelo usuário
 	
 	public static ColecaoRestaurantes lerCsv(){//Cria uma nova coleção com base no arquivo indicado
 		ColecaoRestaurantes c = new ColecaoRestaurantes();
@@ -27,16 +35,14 @@ class ColecaoRestaurantes{
 	}
 
 	public void lerCsv(String path){
-		int qnt = 0;
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(path));
 			br.readLine();//Descartar a primeira linha do CSV
-			
-			while(br.readLine() != null){//Verifica o número de restaurantes no arquivo
-				qnt++;
-			}
-			this.tamanho = qnt;
 
+			while(br.readLine() != null){//Verifica o número de restaurantes no arquivo
+				this.tamanho++;
+			}
+			
 			br.close();
 		}
 		catch(Exception e){
@@ -47,10 +53,11 @@ class ColecaoRestaurantes{
 			BufferedReader br = new BufferedReader(new FileReader(path)); //Lê o arquivo novamente, desta vez preenchendo o array
 			br.readLine();
 
-			restaurantes = new Restaurante[qnt];//Cria o array com o número certo de restaurantes que serão inseridos
+			restaurantes = new Restaurante[tamanho];//Cria o array com o número certo de restaurantes que serão inseridos
 
-			for(int i = 0; i < qnt; i++){//Monta o array de restaurantes
+			for(int i = 0; i < this.tamanho; i++){//Monta o array de restaurantes
 				restaurantes[i] = Restaurante.parseRestaurante(br.readLine());
+				
 			}
 
 			br.close();		
@@ -60,8 +67,17 @@ class ColecaoRestaurantes{
 		}	
 	}
 	
-	public Restaurante[] getRestaurantes(){
-		return this.restaurantes;//Retorna o array todo, quem o chamou deve criar um loop para ver cada elemento
+	public Restaurante getRestaurantes(){
+		for(int i = 0; i < tamanho; i++){
+			if(restaurantes[i].getId() == this.id){
+				return restaurantes[i];
+			}
+		}
+		return null;
+	}
+	
+	public void setIdRestaurante(int id){
+		this.id = id;
 	}
 
 	public int getTamanho(){
@@ -95,6 +111,10 @@ class Restaurante{
 		this.horarioFechamento = dados.horarioFechamento;
 		this.dataAbertura = dados.dataAbertura;
 		this.aberto = dados.aberto;
+	}
+	
+	public int getId(){
+		return this.id;
 	}
 		
 	public static Restaurante parseRestaurante(String strRestaurante){
@@ -168,7 +188,7 @@ class Restaurante{
 		}
 		
 		return String.format("[%d ## %s ## %s ## %d ## %.1f ## [%s] ## %s ## %s-%s ## %s ## %b]", this.id, this.nome, this.cidade, this.capacidade, this.avaliacao, strTiposCozinha, strFaixaPreco, this.horarioAbertura.formatar(), this.horarioFechamento.formatar(), this.dataAbertura.formatar(), this.aberto);
-	}	
+	}
 }
 
 //Classes Componentes
