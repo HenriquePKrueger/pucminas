@@ -39,7 +39,7 @@ void formatar_data(Data* data, char* buffer){
 }
 
 //Struct Restaurante
-typedef struct {
+typedef struct{
     	int id;
     	char* nome;
     	char* cidade;
@@ -52,12 +52,12 @@ typedef struct {
     	Hora horario_fechamento;
     	Data data_abertura;
     	bool aberto;
-} Restaurante;
+}Restaurante;
 
-Restaurante parse_restaurante(char* s) {
+Restaurante parse_restaurante(char* s){
    	 Restaurante r;
 
-   	//Variáveis temporárias para ler as strings antes de converter
+   	//Variáveis temporárias para receber as string antes da conversão e para saber o tamanho das variáveis quie precisam do malloc
 	char nomeTmp[100];
 	char cidadeTmp[100];
 	char tiposTmp[100];
@@ -69,22 +69,21 @@ Restaurante parse_restaurante(char* s) {
 
     	sscanf(s, "%d,%[^,],%[^,],%d,%lf,%[^,],%[^,],%[^-]-%[^,],%[^,],%s", &r.id, nomeTmp, cidadeTmp, &r.capacidade, &r.avaliacao, tiposTmp, precoTmp, hrAbertura, hrFechamento, dtAbertura, abertoTmp);
 	
-	//Alocação de memória para variáveis da struct usando o tamanho das variáveis temporárias
+	//Aloca memória para variáveis da struct usando o tamanho das variáveis temporárias como referência
 	r.nome = (char*) malloc((strlen(nomeTmp) + 1) * sizeof(char));
 	strcpy(r.nome, nomeTmp);
 	r.cidade = (char*) malloc((strlen(cidadeTmp) + 1) * sizeof(char));
 	strcpy(r.cidade, cidadeTmp);
 	r.tipos_cozinha = (char**) malloc(15 * sizeof(char*));
 	
-	//Separar os tipos de cozinha em strings "independentes"
 	r.n_tipos_cozinha = 0;
 	int inicio = 0;
-	for(int i = 0; i < strlen(tiposTmp); i++){
-		if(tiposTmp[i] == ';' || tiposTmp[i] == '\0'){
+	for(int i = 0; i < strlen(tiposCozinhaTmp); i++){//Separa cada tipo de culinária em diferentes strings
+		if(tiposTmp[i] == ';' || tiposCozinhaTmp[i] == '\0'){
 			int tamanho = i - inicio;
 			r.tipos_cozinha[r.n_tipos_cozinha] = (char*) malloc((tamanho + 1)* sizeof(char));
 			for(int j = 0; j < tamanho; j++){
-				r.tipos_cozinha[r.n_tipos_cozinha][j] = tiposTmp[inicio + j];
+				r.tipos_cozinha[r.n_tipos_cozinha][j] = tiposCozinhaTmp[inicio + j];
 			}
 			r.tipos_cozinha[r.n_tipos_cozinha][tamanho] = '\0';
 			r.n_tipos_cozinha++;
@@ -109,11 +108,11 @@ void formatar_restaurante(Restaurante* r, char* buffer) {
 	char dtAbertura[20] = "";
 	char strTiposCozinha[200] = "";
 
-	for(int i = 0; i < r->faixa_preco; i++){
+	for(int i = 0; i < r->faixa_preco; i++){//Monta uma string formada por "$" de acordo com o valor de r->faixa_preco
 		strcat(strPreco, "$");
 	}
 
-	for(int i = 0; i < r->n_tipos_cozinha; i++){
+	for(int i = 0; i < r->n_tipos_cozinha; i++){//Combina os tipos de cozinha em uma string só para ser exibido
 		strcat(strTiposCozinha, r->tipos_cozinha[i]);
 		if(i < r->n_tipos_cozinha - 1){
 			strcat(strTiposCozinha, ", ");
@@ -127,12 +126,53 @@ void formatar_restaurante(Restaurante* r, char* buffer) {
     	sprintf(buffer, "[%d ## %s ## %s ## %d ## %.1lf ## [%s] ## %s ## %s-%s ## %s ## %s]", r->id, r->nome, r->cidade, r->capacidade, r->avaliacao, strTiposCozinha, strPreco, hrAbertura, hrFechamento, dtAbertura, r->aberto ? "true" : "false");
 }
 
+//Struct Colecao_Restaurante
+typedef struct{
+	int tamanho;
+	Restaurante** restaurante;
+}Colecao_Restaurantes;
+
+void ler_csv_colecao(Colecao_Restaurantes* c, char* path){
+	File arquivo = fopen(path, "/tmp/restaurantes.c");
+
+	if(arquivo == NULL){
+		printf("Erro ao abrir arquivo!");
+		return 0;
+	}
+
+	char linha[500];
+	int numLinhas = 0;
+
+	fgets(linha, sizeof(linha), arquivo);//Descartar a primeira linha do cabeçalho
+	while(fgets(linha, sizeof(linha), arquivo) != NULL){//Conta o número de linhas(restaurantes) do arquivo
+		numLinhas++;
+	}
+	
+	c->restaurantes = (Restaurante**) malloc(numLinhas * sizeof(Restaurante*));
+	c->tamanho = 0;
+	
+	rewind(arquivo);//Volta para o início do arquivo para nova leitura
+
+	fgets(linha, sizeof(linha), arquivo);
+	while(fgets(linha, sizeof(linha), arquivo) != NULL){//Envia as linhas para a função parse_restaurante
+		linha[strcspn(linha, "\n")] = '\0';//Remover o '\n'
+		Restaurante r = parse_restaurante(linha);
+		c->restaurantes[c->tamanho] = (Restaurante*) malloc(sizeof(Restaurante));
+		*c->restaurantes[c->tamanho] = r;
+		
+		c->tamanho++;
+	}
+	fclose(arquivo);
+}
+
 int main(){
 	//teste
-	char entrada[] = "1,Classic Palace Works,Zurich,168,3.9,churrasco;internacional,$$,11:00-20:00,2018-03-31,false";
-	Restaurante r1 = parse_restaurante(entrada);
-	char saida[600];
-	formatar_restaurante(&r1, saida);
-	printf("%s\n", saida);
-	return 0;
+	/*
+	*char entrada[] = "1,Classic Palace Works,Zurich,168,3.9,churrasco;internacional,$$,11:00-20:00,2018-03-31,false";
+	*Restaurante r1 = parse_restaurante(entrada);
+	*char saida[600];
+	*formatar_restaurante(&r1, saida);
+	*printf("%s\n", saida);
+	*return 0;
+	*/
 }	
