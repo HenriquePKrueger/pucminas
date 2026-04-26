@@ -78,7 +78,7 @@ Restaurante parse_restaurante(char* s){
 	
 	r.n_tipos_cozinha = 0;
 	int inicio = 0;
-	for(int i = 0; i < strlen(tiposCozinhaTmp); i++){//Separa cada tipo de culinária em diferentes strings
+	for(int i = 0; i <= strlen(tiposCozinhaTmp); i++){//Separa cada tipo de culinária em diferentes strings
 		if(tiposCozinhaTmp[i] == ';' || tiposCozinhaTmp[i] == '\0'){
 			int tamanho = i - inicio;
 			r.tipos_cozinha[r.n_tipos_cozinha] = (char*) malloc((tamanho + 1)* sizeof(char));
@@ -165,26 +165,48 @@ void ler_csv_colecao(Colecao_Restaurantes* c, char* path){
 	fclose(arquivo);
 }
 
-int main(){
-	//teste
-	/*
-	*char entrada[] = "1,Classic Palace Works,Zurich,168,3.9,churrasco;internacional,$$,11:00-20:00,2018-03-31,false";
-	*Restaurante r1 = parse_restaurante(entrada);
-	*char saida[600];
-	*formatar_restaurante(&r1, saida);
-	*printf("%s\n", saida);
-	*return 0;
-	*/
-	Colecao_Restaurantes c;
-	c.tamanho = 0;
-	c.restaurante = NULL;
-	ler_csv_colecao(&c, "/tmp/restaurantes.csv");
+Colecao_Restaurantes* ler_csv(){
+	Colecao_Restaurantes* c = (Colecao_Restaurantes*) malloc(sizeof(Colecao_Restaurantes));
+	c->tamanho = 0;
+	c->restaurante = NULL;
+	ler_csv_colecao(c, "/tmp/restaurantes.csv");
+	return c;
+}
 
+void limpar_colecao(Colecao_Restaurantes* c){//Função para liberar os malloc
+	for(int i = 0; i < c->tamanho; i++){
+		free(c->restaurante[i]->nome);
+		free(c->restaurante[i]->cidade);
+		for(int j = 0; j < c->restaurante[i]->n_tipos_cozinha; j++){
+			free(c->restaurante[i]->tipos_cozinha[j]);
+		}
+		free(c->restaurante[i]->tipos_cozinha);
+		free(c->restaurante[i]);
+		
+	}
+	free(c->restaurante);
+}
+
+int main(){
+	Colecao_Restaurantes* c = ler_csv();
+	int id;
 	char buffer[500];
-	for(int i = 0; i < c.tamanho; i++){
-		formatar_restaurante(c.restaurante[i], buffer);
-		printf("%s\n", buffer);
-	}	
+
+	while(scanf("%d", &id) && id != -1){//Finaliza o programa quando digitar "-1"
+		bool encontrado = false;
+		int cont = 0;
+		while(cont < c->tamanho && !encontrado){//Percorre a colecao buscando o id informado
+			if(c->restaurante[cont]->id == id){
+				formatar_restaurante(c->restaurante[cont], buffer);
+				printf("%s\n", buffer);
+				encontrado = true;
+			}
+			cont++;
+		}
+
+	}
+	limpar_colecao(c);
+	free(c);	
 	return 0;
 }	
 
