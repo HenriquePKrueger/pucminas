@@ -206,7 +206,7 @@ void selecao(Colecao_Restaurantes* c){
 		int menor = i;
 		for(int j = (i + 1); j < c->tamanho; j++){
 			comparacoes++;
-			if(strcmp(c->restaurante[j]->nome, c->restaurante[menor]->nome) < 0){
+			if(c->restaurante[j]->nome[0] < c->restaurante[menor]->nome[0]){
 				menor = j;
 			}
 		}
@@ -216,19 +216,35 @@ void selecao(Colecao_Restaurantes* c){
 
 int main(){
 	Colecao_Restaurantes* c = ler_csv();
-	
-	clock_t inicio = clock();
-	
-	selecao(c);
-	
-	clock_t fim = clock();
+	Colecao_Restaurantes restaurantesBuscados;//Cria uma coleção dos restaurantes que foram buscados pelo usuário
+	restaurantesBuscados.tamanho = 0;
+	restaurantesBuscados.restaurante = (Restaurante**) malloc(500 * sizeof(Restaurante*));
 
-	double tempoTotal = ((double)(fim - inicio)) / CLOCKS_PER_SEC;//Calcula o tempo de execução do seleção
+	int id;
 	
+	while(scanf("%d", &id) && id != -1){//Roda o arquivo procurando pelo id digitado pelo usuario
+		bool encontrado = false;
+		int cont = 0;
+		
+		while(cont < c->tamanho && !encontrado){
+			if(c->restaurante[cont]->id == id){
+				restaurantesBuscados.restaurante[restaurantesBuscados.tamanho] = c->restaurante[cont];
+				restaurantesBuscados.tamanho++;
+				encontrado = true;	
+			}
+			cont++;
+		}
+	}
+	
+	clock_t inicio = clock();//Inicia o contador
+	selecao(&restaurantesBuscados);//Envia a lista de restaurantes para o seleção
+	clock_t fim = clock();
+	double tempoTotal = ((double)(fim - inicio)) / CLOCKS_PER_SEC;//Calcula o tempo de execução do seleção
+
 	char buffer[500];
-	for(int i = 0; i < c->tamanho; i++){//Printa na tela a lista ordenada com base nos nomes
-		formatar_restaurante(c->restaurante[i], buffer);
-		printf("%s\n", buffer);
+	for(int i = 0; i < restaurantesBuscados.tamanho; i++){//Printa na tela a lista ordenada com base nos nomes
+		formatar_restaurante(restaurantesBuscados.restaurante[i], buffer);
+		printf("%s\n", buffer);//printa na tela a lista já ordenada
 	}
 	
 	//Gerar o arquivo de log
@@ -238,6 +254,7 @@ int main(){
 		fclose(log);
 	}
 
+	free(restaurantesBuscados.restaurante);
 	limpar_colecao(c);
 	free(c);	
 	return 0;
