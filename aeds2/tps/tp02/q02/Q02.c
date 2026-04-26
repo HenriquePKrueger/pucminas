@@ -103,10 +103,15 @@ Restaurante parse_restaurante(char* s) {
 }
 
 void formatar_restaurante(Restaurante* r, char* buffer) {
+	char strPreco[20] = "";
 	char hrAbertura[20] = "";
    	char hrFechamento[20] = "";
 	char dtAbertura[20] = "";
 	char strTiposCozinha[200] = "";
+
+	for(int i = 0; i < r->faixa_preco; i++){
+		strcat(strPreco, "$");
+	}
 
 	for(int i = 0; i < r->n_tipos_cozinha; i++){
 		strcat(strTiposCozinha, r->tipos_cozinha[i]);
@@ -119,7 +124,7 @@ void formatar_restaurante(Restaurante* r, char* buffer) {
     	formatar_hora(&r->horario_fechamento, hrFechamento);
     	formatar_data(&r->data_abertura, dtAbertura);
 
-    	sprintf(buffer, "[%d ## %s ## %s ## %d ## %.1lf ## [%s] ## %d ## %s-%s ## %s ## %s]", r->id, r->nome, r->cidade, r->capacidade, r->avaliacao, strTiposCozinha, r->faixa_preco, hrAbertura, hrFechamento, dtAbertura, r->aberto ? "true" : "false");
+    	sprintf(buffer, "[%d ## %s ## %s ## %d ## %.1lf ## [%s] ## %s ## %s-%s ## %s ## %s]", r->id, r->nome, r->cidade, r->capacidade, r->avaliacao, strTiposCozinha, strPreco, hrAbertura, hrFechamento, dtAbertura, r->aberto ? "true" : "false");
 }
 
 int main(){
