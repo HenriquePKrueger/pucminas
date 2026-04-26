@@ -189,22 +189,32 @@ void limpar_colecao(Colecao_Restaurantes* c){//Função para liberar os malloc
 
 int main(){
 	Colecao_Restaurantes* c = ler_csv();
-	int id;
-	char buffer[500];
+	Colecao_Restaurantes restaurantesBuscados;
+	restaurantesBuscados.tamanho = 0;
+	restaurantesBuscados.restaurante = (Restaurante**) malloc(500 * sizeof(Restaurante*));
 
-	while(scanf("%d", &id) && id != -1){//Finaliza o programa quando digitar "-1"
+	int id;
+
+	while(scanf("%d", &id) && id != -1){//Lê os ids até o "-1"
 		bool encontrado = false;
 		int cont = 0;
 		while(cont < c->tamanho && !encontrado){//Percorre a colecao buscando o id informado
-			if(c->restaurante[cont]->id == id){
-				formatar_restaurante(c->restaurante[cont], buffer);
-				printf("%s\n", buffer);
+			if(c->restaurante[cont]->id == id){//Cria uma nova coleção com os restaurantes de id informado
+				restaurantesBuscados.restaurante[restaurantesBuscados.tamanho] = c->restaurante[cont];
+				restaurantesBuscados.tamanho++;
 				encontrado = true;
 			}
 			cont++;
 		}
 
 	}
+	
+	char buffer[500];
+	for(int i = 0; i < restaurantesBuscados.tamanho; i++){//Printa a colecao criada anteriormente
+		formatar_restaurante(restaurantesBuscados.restaurante[i], buffer);
+		printf("%s\n", buffer);
+	}
+
 	limpar_colecao(c);
 	free(c);	
 	return 0;

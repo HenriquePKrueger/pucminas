@@ -206,7 +206,7 @@ void selecao(Colecao_Restaurantes* c){
 		int menor = i;
 		for(int j = (i + 1); j < c->tamanho; j++){
 			comparacoes++;
-			if(c->restaurante[j]->nome[0] < c->restaurante[menor]->nome[0]){
+			if(strcmp(c->restaurante[j]->nome, c->restaurante[menor]->nome) < 0){
 				menor = j;
 			}
 		}
