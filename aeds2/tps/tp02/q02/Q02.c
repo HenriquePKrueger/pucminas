@@ -60,14 +60,14 @@ Restaurante parse_restaurante(char* s){
    	//Variáveis temporárias para receber as string antes da conversão e para saber o tamanho das variáveis quie precisam do malloc
 	char nomeTmp[100];
 	char cidadeTmp[100];
-	char tiposTmp[100];
+	char tiposCozinhaTmp[100];
 	char precoTmp[10];
     	char hrAbertura[10];
 	char hrFechamento[10];
 	char dtAbertura[20];
 	char abertoTmp[20];
 
-    	sscanf(s, "%d,%[^,],%[^,],%d,%lf,%[^,],%[^,],%[^-]-%[^,],%[^,],%s", &r.id, nomeTmp, cidadeTmp, &r.capacidade, &r.avaliacao, tiposTmp, precoTmp, hrAbertura, hrFechamento, dtAbertura, abertoTmp);
+    	sscanf(s, "%d,%[^,],%[^,],%d,%lf,%[^,],%[^,],%[^-]-%[^,],%[^,],%s", &r.id, nomeTmp, cidadeTmp, &r.capacidade, &r.avaliacao, tiposCozinhaTmp, precoTmp, hrAbertura, hrFechamento, dtAbertura, abertoTmp);
 	
 	//Aloca memória para variáveis da struct usando o tamanho das variáveis temporárias como referência
 	r.nome = (char*) malloc((strlen(nomeTmp) + 1) * sizeof(char));
@@ -79,7 +79,7 @@ Restaurante parse_restaurante(char* s){
 	r.n_tipos_cozinha = 0;
 	int inicio = 0;
 	for(int i = 0; i < strlen(tiposCozinhaTmp); i++){//Separa cada tipo de culinária em diferentes strings
-		if(tiposTmp[i] == ';' || tiposCozinhaTmp[i] == '\0'){
+		if(tiposCozinhaTmp[i] == ';' || tiposCozinhaTmp[i] == '\0'){
 			int tamanho = i - inicio;
 			r.tipos_cozinha[r.n_tipos_cozinha] = (char*) malloc((tamanho + 1)* sizeof(char));
 			for(int j = 0; j < tamanho; j++){
@@ -133,11 +133,11 @@ typedef struct{
 }Colecao_Restaurantes;
 
 void ler_csv_colecao(Colecao_Restaurantes* c, char* path){
-	File arquivo = fopen(path, "/tmp/restaurantes.c");
+	FILE* arquivo = fopen(path, "r");
 
 	if(arquivo == NULL){
 		printf("Erro ao abrir arquivo!");
-		return 0;
+		return;
 	}
 
 	char linha[500];
@@ -148,7 +148,7 @@ void ler_csv_colecao(Colecao_Restaurantes* c, char* path){
 		numLinhas++;
 	}
 	
-	c->restaurantes = (Restaurante**) malloc(numLinhas * sizeof(Restaurante*));
+	c->restaurante = (Restaurante**) malloc(numLinhas * sizeof(Restaurante*));
 	c->tamanho = 0;
 	
 	rewind(arquivo);//Volta para o início do arquivo para nova leitura
@@ -157,8 +157,8 @@ void ler_csv_colecao(Colecao_Restaurantes* c, char* path){
 	while(fgets(linha, sizeof(linha), arquivo) != NULL){//Envia as linhas para a função parse_restaurante
 		linha[strcspn(linha, "\n")] = '\0';//Remover o '\n'
 		Restaurante r = parse_restaurante(linha);
-		c->restaurantes[c->tamanho] = (Restaurante*) malloc(sizeof(Restaurante));
-		*c->restaurantes[c->tamanho] = r;
+		c->restaurante[c->tamanho] = (Restaurante*) malloc(sizeof(Restaurante));
+		*c->restaurante[c->tamanho] = r;
 		
 		c->tamanho++;
 	}
@@ -175,4 +175,20 @@ int main(){
 	*printf("%s\n", saida);
 	*return 0;
 	*/
+	Colecao_Restaurantes c;
+	c.tamanho = 0;
+	c.restaurante = NULL;
+	ler_csv_colecao(&c, "/tmp/restaurantes.csv");
+
+	char buffer[500];
+	for(int i = 0; i < c.tamanho; i++){
+		formatar_restaurante(c.restaurante[i], buffer);
+		printf("%s\n", buffer);
+	}	
+	return 0;
 }	
+
+
+
+
+
