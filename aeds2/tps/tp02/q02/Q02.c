@@ -115,7 +115,7 @@ void formatar_restaurante(Restaurante* r, char* buffer) {
 	for(int i = 0; i < r->n_tipos_cozinha; i++){//Combina os tipos de cozinha em uma string só para ser exibido
 		strcat(strTiposCozinha, r->tipos_cozinha[i]);
 		if(i < r->n_tipos_cozinha - 1){
-			strcat(strTiposCozinha, ", ");
+			strcat(strTiposCozinha, ",");
 		}
 	}	    
 
