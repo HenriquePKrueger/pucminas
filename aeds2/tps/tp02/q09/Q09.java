@@ -1,8 +1,14 @@
 import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
-public class Q01{
+public class Q09{
+	
+	static int comparacoes = 0;
+	static int movimentacoes = 0;
+
 	public static void main(String[] args) throws Exception{
 		Scanner sc = new Scanner(System.in);
 		ColecaoRestaurantes c = ColecaoRestaurantes.lerCsv();
@@ -24,9 +30,22 @@ public class Q01{
 			entrada = sc.nextLine();
 		}
 		
-		for(int i = 0; i < cont; i++){
-			System.out.println(encontrados[i].formatar());
+		ColecaoRestaurantes ordenar = new ColecaoRestaurantes(encontrados, cont);
+
+		long inicio = System.currentTimeMillis();//Inicia o contador
+		
+		ordenar.heapsort();
+
+		long fim = System.currentTimeMillis();//finaliza o contador
+		double tempoTotal = (fim - inicio) / 1000.0;//Converter para segundos
+		
+		for(int i = 0; i < ordenar.getTamanho(); i++){
+			System.out.println(ordenar.getListaRestaurantes()[i].formatar());
 		}
+	
+		PrintWriter log = new PrintWriter(new FileWriter("899683_heapsort.txt"));
+		log.printf("899683\t%d\t%d\t%f", Q09.comparacoes, Q09.movimentacoes, tempoTotal);
+		log.close();
 
 		sc.close();
 	}
@@ -36,13 +55,84 @@ public class Q01{
 class ColecaoRestaurantes{
 	private int tamanho;
 	private Restaurante[] restaurantes;
-	private int id;//Variável que armazena o id desejado pelo usuário
-	
+	private int id;//Variável que armazena o id desejado pelo usuário	
 	public static ColecaoRestaurantes lerCsv() throws Exception{//Cria uma nova coleção com base no arquivo indicado
 		ColecaoRestaurantes c = new ColecaoRestaurantes();
 		c.lerCsv("/tmp/restaurantes.csv");
 		return c;
 	}
+
+	public ColecaoRestaurantes(){
+		this.restaurantes= null;
+		this.tamanho = 0;
+	}
+	
+	public ColecaoRestaurantes(Restaurante[] r, int size){
+		this.restaurantes = r;
+		this.tamanho = size;
+	}
+
+	public void heapsort(){//Algorítmo heapsort
+		Restaurante[] tmp = new Restaurante[tamanho + 1];
+		for(int i = 0; i < tamanho; i++){
+			tmp[i + 1] = restaurantes[i];
+		}
+		for(int i = tamanho / 2; i >= 1; i--){
+			reconstruir(tmp, i, tamanho);
+		}
+		
+		int size = tamanho;
+		while(size > 1){
+			swap(tmp, 1, size--);
+			reconstruir(tmp, 1, size);
+		}
+		for(int i = 0; i < tamanho; i++){
+			restaurantes[i] = tmp[i + 1];
+		}
+	}
+
+	private void reconstruir(Restaurante[] arr, int i, int size){
+		int filho = 2 * i;
+		while(filho <= size){
+			if(filho < size && eMenor(arr[filho], arr[filho + 1])){
+				filho++;
+			}
+			if(eMenor(arr[i], arr[filho])){
+				swap(arr, i, filho);
+				i = filho;
+				filho = 2 * i;
+			}
+			else{
+				filho = size + 1;
+			}
+		}
+	}
+
+	private boolean eMenor(Restaurante r1, Restaurante r2){
+		Q09.comparacoes++;
+
+		int compData = r1.getDataAbertura().compareTo(r2.getDataAbertura());
+		if(compData < 0){
+			return true;
+		}
+		if(compData > 0){
+			return false;
+		}
+		
+		Q09.comparacoes++;
+		return r1.getNome().compareTo(r2.getNome()) < 0;
+	}
+
+	private void swap(Restaurante[] arr, int i, int j){
+		Restaurante temp = arr[i];
+		arr[i] = arr[j];
+		arr[j] = temp;
+		Q09.movimentacoes += 3;
+	}
+
+	public Restaurante[] getListaRestaurantes(){
+		return this.restaurantes;
+	}	
 
 	public void lerCsv(String path) throws Exception{//Adicionei o "throws Exception" para remover os try catchs que estavam poluindo o código
 		BufferedReader br = new BufferedReader(new FileReader(path));
@@ -113,8 +203,20 @@ class Restaurante{
 		this.aberto = dados.aberto;
 	}
 	
+	public String getNome(){
+		return this.nome;
+	}
+
+	public String getCidade(){
+		return this.cidade;
+	}
+	
 	public int getId(){
 		return this.id;
+	}
+	
+	public Data getDataAbertura(){
+		return this.dataAbertura;
 	}
 		
 	public static Restaurante parseRestaurante(String strRestaurante){
@@ -233,6 +335,17 @@ class Data{
 		this.mes = mes;
 		this.dia = dia;	
 	}
+	
+	public int compareTo(Data outra){
+
+		if(this.ano != outra.ano){
+			return this.ano - outra.ano;
+		}
+		if(this.mes != outra.mes){
+			return this.mes - outra.mes;
+		}
+		return this.dia - outra.dia;
+	}
 
 	//Retorno é do tipo "Data" para que o retorno chame o construtor e crie o objeto
 	public static Data parseData(String strData){
@@ -306,3 +419,4 @@ class DadosRestaurante{
 		this.tiposCozinha[indice] = temp;
 	}
 }
+

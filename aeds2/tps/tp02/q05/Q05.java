@@ -1,8 +1,14 @@
 import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
-public class Q01{
+public class Q05{
+	
+	static int comparacoes = 0;
+	static int movimentacoes = 0;
+
 	public static void main(String[] args) throws Exception{
 		Scanner sc = new Scanner(System.in);
 		ColecaoRestaurantes c = ColecaoRestaurantes.lerCsv();
@@ -24,9 +30,30 @@ public class Q01{
 			entrada = sc.nextLine();
 		}
 		
-		for(int i = 0; i < cont; i++){
-			System.out.println(encontrados[i].formatar());
+		ColecaoRestaurantes ordenar = new ColecaoRestaurantes(encontrados, cont);
+
+		long inicio = System.currentTimeMillis();//Inicia o contador
+		
+		boolean[] resultados = new boolean[500];
+		int contBuscas = 0;		
+
+		entrada = sc.nextLine();
+		while(!entrada.equals("FIM")){//Lê os nomes atem o "FIM"
+			resultados[contBuscas] = ordenar.pesquisaSequencial(entrada);
+			contBuscas++;
+			entrada = sc.nextLine();
 		}
+
+		long fim = System.currentTimeMillis();//finaliza o contador
+		double tempoTotal = (fim - inicio) / 1000.0;//Converter para segundos
+		
+		for(int i = 0; i < contBuscas; i++){
+			System.out.println(resultados[i] ? "SIM" : "NAO");
+		}
+	
+		PrintWriter log = new PrintWriter(new FileWriter("899683_sequencial.txt"));
+		log.printf("899683\t%d\t%d\t%f", Q05.comparacoes, Q05.movimentacoes, tempoTotal);
+		log.close();
 
 		sc.close();
 	}
@@ -36,13 +63,40 @@ public class Q01{
 class ColecaoRestaurantes{
 	private int tamanho;
 	private Restaurante[] restaurantes;
-	private int id;//Variável que armazena o id desejado pelo usuário
-	
+	private int id;//Variável que armazena o id desejado pelo usuário	
 	public static ColecaoRestaurantes lerCsv() throws Exception{//Cria uma nova coleção com base no arquivo indicado
 		ColecaoRestaurantes c = new ColecaoRestaurantes();
 		c.lerCsv("/tmp/restaurantes.csv");
 		return c;
 	}
+
+	public ColecaoRestaurantes(){
+		this.restaurantes= null;
+		this.tamanho = 0;
+	}
+	
+	public ColecaoRestaurantes(Restaurante[] r, int size){
+		this.restaurantes = r;
+		this.tamanho = size;
+	}
+
+	public boolean pesquisaSequencial(String nomeBuscado){//Algorítmo de pesquisa sequencial
+		boolean encontrado = false;
+		int i = 0;
+		
+		while(i < this.tamanho && !encontrado){
+			Q05.comparacoes++;
+			if(this.restaurantes[i].getNome().equals(nomeBuscado)){
+				encontrado = true;
+			}
+			i++;
+		}
+		return encontrado;
+	}
+
+	public Restaurante[] getListaRestaurantes(){
+		return this.restaurantes;
+	}	
 
 	public void lerCsv(String path) throws Exception{//Adicionei o "throws Exception" para remover os try catchs que estavam poluindo o código
 		BufferedReader br = new BufferedReader(new FileReader(path));
@@ -111,6 +165,14 @@ class Restaurante{
 		this.horarioFechamento = dados.horarioFechamento;
 		this.dataAbertura = dados.dataAbertura;
 		this.aberto = dados.aberto;
+	}
+	
+	public String getNome(){
+		return this.nome;
+	}
+
+	public String getCidade(){
+		return this.cidade;
 	}
 	
 	public int getId(){
@@ -306,3 +368,4 @@ class DadosRestaurante{
 		this.tiposCozinha[indice] = temp;
 	}
 }
+

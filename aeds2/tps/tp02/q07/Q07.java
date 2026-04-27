@@ -1,8 +1,14 @@
 import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
-public class Q01{
+public class Q07{
+	
+	static int comparacoes = 0;
+	static int movimentacoes = 0;
+
 	public static void main(String[] args) throws Exception{
 		Scanner sc = new Scanner(System.in);
 		ColecaoRestaurantes c = ColecaoRestaurantes.lerCsv();
@@ -24,9 +30,22 @@ public class Q01{
 			entrada = sc.nextLine();
 		}
 		
-		for(int i = 0; i < cont; i++){
-			System.out.println(encontrados[i].formatar());
+		ColecaoRestaurantes ordenar = new ColecaoRestaurantes(encontrados, cont);
+
+		long inicio = System.currentTimeMillis();//Inicia o contador
+		
+		ordenar.mergesort();
+
+		long fim = System.currentTimeMillis();//finaliza o contador
+		double tempoTotal = (fim - inicio) / 1000.0;//Converter para segundos
+		
+		for(int i = 0; i < ordenar.getTamanho(); i++){
+			System.out.println(ordenar.getListaRestaurantes()[i].formatar());
 		}
+	
+		PrintWriter log = new PrintWriter(new FileWriter("899683_mergesort.txt"));
+		log.printf("899683\t%d\t%d\t%f", Q07.comparacoes, Q07.movimentacoes, tempoTotal);
+		log.close();
 
 		sc.close();
 	}
@@ -36,13 +55,96 @@ public class Q01{
 class ColecaoRestaurantes{
 	private int tamanho;
 	private Restaurante[] restaurantes;
-	private int id;//Variável que armazena o id desejado pelo usuário
-	
+	private int id;//Variável que armazena o id desejado pelo usuário	
 	public static ColecaoRestaurantes lerCsv() throws Exception{//Cria uma nova coleção com base no arquivo indicado
 		ColecaoRestaurantes c = new ColecaoRestaurantes();
 		c.lerCsv("/tmp/restaurantes.csv");
 		return c;
 	}
+
+	public ColecaoRestaurantes(){
+		this.restaurantes= null;
+		this.tamanho = 0;
+	}
+	
+	public ColecaoRestaurantes(Restaurante[] r, int size){
+		this.restaurantes = r;
+		this.tamanho = size;
+	}
+	
+	public void mergesort(){
+		mergesort(0, tamanho - 1);
+	}
+
+	public void mergesort(int esq, int dir){//Algorítmo mergesort
+		if(esq < dir){
+			int meio = (esq + dir) / 2;
+			mergesort(esq, meio);
+			mergesort(meio + 1, dir);
+			intercalar(esq, meio, dir);
+		}
+	}
+
+	private void intercalar(int esq, int meio, int dir){
+		int n1 = meio - esq + 1;
+		int n2 = dir - meio;
+
+		Restaurante[] esquerda = new Restaurante[n1];
+		Restaurante[] direita = new Restaurante[n2];
+		
+		for(int i = 0; i < n1; i++){
+			esquerda[i] = restaurantes[esq + i];
+			Q07.movimentacoes++;
+		}
+		for(int j = 0; j < n2; j++){
+			direita[j] = restaurantes[meio + 1 + j];
+			Q07.movimentacoes++;
+		}
+
+		int i = 0;
+		int j = 0;
+		int k = esq;
+
+		while(i < n1 && j < n2){
+			Q07.comparacoes++;
+			int compCidade = esquerda[i].getCidade().compareTo(direita[j].getCidade());
+			boolean menor;
+			
+			if(compCidade < 0){
+				menor = true;
+			}
+			else if(compCidade == 0){
+				Q07.comparacoes++;
+				menor = esquerda[i].getNome().compareTo(direita[j].getNome()) < 0;
+			}
+			else{
+				menor = false;
+			}
+
+			if(menor){
+				restaurantes[k] = esquerda[i++];
+			}
+			else{
+				restaurantes[k] = direita[j++];
+			}
+			Q07.movimentacoes++;
+			k++;
+		}
+			
+		while(i < n1){
+			restaurantes[k++] = esquerda[i++];
+			Q07.movimentacoes++;
+		}
+		while(j < n2){
+			restaurantes[k++] = direita[j++];
+			Q07.movimentacoes++;
+		}
+	
+	}
+
+	public Restaurante[] getListaRestaurantes(){
+		return this.restaurantes;
+	}	
 
 	public void lerCsv(String path) throws Exception{//Adicionei o "throws Exception" para remover os try catchs que estavam poluindo o código
 		BufferedReader br = new BufferedReader(new FileReader(path));
@@ -111,6 +213,14 @@ class Restaurante{
 		this.horarioFechamento = dados.horarioFechamento;
 		this.dataAbertura = dados.dataAbertura;
 		this.aberto = dados.aberto;
+	}
+	
+	public String getNome(){
+		return this.nome;
+	}
+
+	public String getCidade(){
+		return this.cidade;
 	}
 	
 	public int getId(){
@@ -306,3 +416,4 @@ class DadosRestaurante{
 		this.tiposCozinha[indice] = temp;
 	}
 }
+
