@@ -3,29 +3,29 @@ import java.util.*;
 public class EstruturaFlexivel{
 	public static void main(String[] args){
 		Scanner sc = new Scanner(System.in);
-
-		char c = sc.next().charAt(0);
-		//'E': Adiciona elemento à fila - ler numero do elemento
-		//'D': Remove elemento da fila, se estiver vazia printa "-1"
-		//'M': Imprime elementos da fila
-		//'P': Pesquisa se o número está na fila - ler numero do elemento - print "S" ou "N
-		
 		Fila f = new Fila();
+		
+		while(sc.hasNext()){
+			char c = sc.next().charAt(0);
+			//'E': Adiciona elemento à fila - ler numero do elemento
+			//'D': Remove elemento da fila, se estiver vazia printa "-1"
+			//'M': Imprime elementos da fila
+			//'P': Pesquisa se o número está na fila - ler numero do elemento - print "S" ou "N
 			
-		if(c == 'E'){
-			int codigo = sc.nextInt();
-			f.inserir(codigo);
-		}
-		else if(c == 'P'){
-			int codigo = sc.nextInt();
-			f.pesquisar(codigo);
-			System.out.println(f.pesquisar(codigo) ? "SIM" : "NAO");
-		}
-		else if(c == 'D'){
+			if(c == 'E'){
+				int elementoInserir = sc.nextInt();
+				f.inserir(elementoInserir);
+			}
+			else if(c == 'P'){
+				int elementoPesquisar = sc.nextInt();
+				System.out.println(f.pesquisar(elementoPesquisar) ? "SIM" : "NAO");
+			}
+			else if(c == 'D'){
 			
-		}
-		else if(c == 'M'){
+			}
+			else if(c == 'M'){
 	
+			}
 		}
 	}
 }
@@ -38,8 +38,8 @@ class Celula{
 		this(0);
 	}
 	
-	public Celula(int x){
-		this.elemento = 0;
+	public Celula(int elementoInserir){
+		this.elemento = elementoInserir;
 		this.prox = null;
 	}
 
@@ -47,7 +47,11 @@ class Celula{
 		return this.elemento;
 	}
 
-	public Celula getProxCelula(){
+	public void setProx(Celula prox){
+		this.prox = prox;
+	}
+	
+	public Celula getProx(){
 		return this.prox;
 	}
 }
@@ -55,7 +59,7 @@ class Celula{
 class Fila{
 	private Celula primeiro;
 	private Celula ultimo;
-	private int totalCelulas = 0;
+	private int qntCelulas = 0;
 
 	public Fila(){//cria a fila e a celula cabeça
 		Celula c = new Celula();
@@ -63,20 +67,23 @@ class Fila{
 		this.ultimo = c;
 	}
 
-	public void inserir(int x){
-		Celula c = new Celula(x);
-		this.ultimo.prox = c;
+	public void inserir(int elementoInserir){
+		Celula c = new Celula(elementoInserir);
+		this.ultimo.setProx(c);
 		this.ultimo = c;
-		this.totalCelulas++;
+		this.qntCelulas++;
 	}
 
-	public int pesquisar(int x){
-		Celula aux = this.primeiro.getProxCelula;
-		for(int i = 0; i < this.totalcelulas; i++){//pode colocar indo até null
-			if(aux.elemento == x){
-				return 1;
+	public boolean pesquisar(int elementoPesquisar){
+		Celula aux = this.primeiro.getProx();
+
+		for(int i = 0; i < this.qntCelulas; i++){//pode colocar indo até null
+			if(aux.getElemento() == elementoPesquisar){
+				return true;
 			}
+			aux = aux.getProx();
 		}
+		return false;
 	}
 
 }
