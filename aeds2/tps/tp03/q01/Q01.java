@@ -24,6 +24,9 @@ class Restaurante{
 	private Data dataAbertura;
 	private boolean aberto;
 	
+	public Restaurante(){//Fazer construtor
+	}
+	
 	public static Restaurante parseRestaurante(String s){
 		Restaurante r = new Restaurante();
 
@@ -49,11 +52,17 @@ class Restaurante{
 			}
 			else{
 				arrDados[contVirgula] = sTmp;
+				System.out.println(arrDados[contVirgula]);
 				contVirgula++;
 				sTmp = "";
 			}
+		
 		}
+		
+		arrDados[contVirgula] = sTmp;
+		System.out.println(arrDados[contVirgula]);
 
+		//teste
 		String[] teste = new String[2];
 		teste[0] = "teste1;";
 		teste[1] = " teste2";		
@@ -65,8 +74,8 @@ class Restaurante{
 		r.avaliacao = Double.parseDouble(arrDados[4]);
 		r.tiposCozinha = teste;//Separar arrDados[5]
 		r.faixaPreco = arrDados[6].length();
-		r.horarioAbertura = Hora.parseHora("11:00");//Separar arrDados[7]
-		r.horarioFechamento = Hora.parseHora("23:59");
+		r.horarioAbertura = Hora.parseHora(r.separarHoras(arrDados[7])[0]);//Separar arrDados[7]
+		r.horarioFechamento = Hora.parseHora(r.separarHoras(arrDados[7])[1]);
 		r.dataAbertura = Data.parseData(arrDados[8]);
 		r.aberto = Boolean.parseBoolean(arrDados[9]);
 
@@ -78,6 +87,28 @@ class Restaurante{
 		this.tiposCozinha, this.faixaPreco, this.horarioAbertura, this.horarioFechamento, this.dataAbertura, this.aberto);
 		return s;
 	}
+
+	public String[] separarHoras(String s){
+		String[] str = new String[2];
+		String tmp = "";
+		int indice = 1;	
+
+		for(int i = 0; i < s.length(); i++){
+			char c = s.charAt(i);
+			
+			if(c != '-'){
+				tmp += c;		
+			}
+			else{
+				str[indice] = tmp;
+				indice++;
+				tmp = "";	
+			}
+			str[indice] = tmp;
+		}
+		return str;	
+	}
+
 }
 
 class Hora{
