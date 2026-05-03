@@ -1,13 +1,16 @@
 import java.util.*;
 
+//Considerando que essa é a questão de número 1, acabei optando por deixar alguns comentários no código. Esses me ajudam a entender as melhores práticas de programação
+
 public class Q01{
 	public static void main(String args[]){
-		Data d = Data.parseData("2026-12-27");
-		System.out.println(d.formatar());
-		Hora h = Hora.parseHora("11:00");
-		System.out.println(h.formatar());
-		Restaurante r = Restaurante.parseRestaurante("1,Classic Palace Works,Zurich,168,3.9,churrasco;internacional,$$,11:00-20:00,2018-03-31,false");
-		System.out.println(r.formatar());
+		Scanner sc = new Scanner(System.in);
+		
+		while(sc.hasNextLine()){
+			String entrada = sc.nextLine();
+			Restaurante r = Restaurante.parseRestaurante(entrada);
+			System.out.println(r.formatar());
+		}
 	}
 }
 
@@ -24,89 +27,157 @@ class Restaurante{
 	private Data dataAbertura;
 	private boolean aberto;
 	
-	public Restaurante(){//Fazer construtor
+	/*
+	*Considerando que a chave de busca é o 'nome' esse não pode ser vazio
+	*public Restaurante(){
+	*	this.nome = "";
+	*}
+	*/
+
+	public Restaurante(String nome){//Já que o 'nome' não pode ser vazio, o construtor dispara uma excessão se receber esse atributo vazio 
+		if(nome == null || nome.isEmpty()){
+			throw new IllegalArgumentException("Nome obrigatorio!");
+		}
+		this.nome = nome;
 	}
 	
 	public static Restaurante parseRestaurante(String s){
-		Restaurante r = new Restaurante();
-
-		String sTmp = "";
-		int contVirgula = 1;
+		String buffer = "";
+		int index = 1;
 		
-		for(int i = 0; i < s.length(); i++){
+		for(int i = 0; i < s.length(); i++){//Conta o numero de dados a serem inseridos a partir do número total de vírgulas
 			char c = s.charAt(i);
 			
 			if(c == ','){
-				contVirgula++;
+				index++;
 			}
 		}
 		
-		String[] arrDados = new String[contVirgula];
-		contVirgula = 0;
+		String[] dados = new String[index];
+		index = 0;
 
 		for(int i = 0; i < s.length(); i++){
 			char c = s.charAt(i);
 			
 			if(c != ','){
-				sTmp += c;
+				buffer += c;
 			}
 			else{
-				arrDados[contVirgula] = sTmp;
-				System.out.println(arrDados[contVirgula]);
-				contVirgula++;
-				sTmp = "";
+				dados[index] = buffer;
+				index++;
+				buffer = "";
 			}
-		
-		}
-		
-		arrDados[contVirgula] = sTmp;
-		System.out.println(arrDados[contVirgula]);
+		}	
+		dados[index] = buffer;
 
-		//teste
-		String[] teste = new String[2];
-		teste[0] = "teste1;";
-		teste[1] = " teste2";		
+		Restaurante r = new Restaurante(dados[1]);//Cria um novo objeto passando o 'nome' para o contrutor
+	
+		r.id = Integer.parseInt(dados[0]);
+		r.cidade = dados[2];
+		r.capacidade = Integer.parseInt(dados[3]);
+		r.avaliacao = Double.parseDouble(dados[4]);
+		r.tiposCozinha = r.separarTiposCozinha(dados[5]);
+		r.faixaPreco = dados[6].length();
 
-		r.id = Integer.parseInt(arrDados[0]);
-		r.nome = arrDados[1];
-		r.cidade = arrDados[2];
-		r.capacidade = Integer.parseInt(arrDados[3]);
-		r.avaliacao = Double.parseDouble(arrDados[4]);
-		r.tiposCozinha = teste;//Separar arrDados[5]
-		r.faixaPreco = arrDados[6].length();
-		r.horarioAbertura = Hora.parseHora(r.separarHoras(arrDados[7])[0]);//Separar arrDados[7]
-		r.horarioFechamento = Hora.parseHora(r.separarHoras(arrDados[7])[1]);
-		r.dataAbertura = Data.parseData(arrDados[8]);
-		r.aberto = Boolean.parseBoolean(arrDados[9]);
+		//Chama o método "separarHoras" 2 vezes sem necessidade:
+		//r.horarioAbertura = Hora.parseHora(r.separarHoras(dados[7])[0]);
+		//r.horarioFechamento = Hora.parseHora(r.separarHoras(dados[7])[1]);
+
+		//Melhor:
+		String[] h = r.separarHoras(dados[7]);
+		r.horarioAbertura = Hora.parseHora(h[0]);
+		r.horarioFechamento = Hora.parseHora(h[1]);
+
+		r.dataAbertura = Data.parseData(dados[8]);
+		r.aberto = Boolean.parseBoolean(dados[9]);
 
 		return r;			
 	}
 
 	public String formatar(){
-		String s = String.format("[%d ## %s ## %s ## %d ## %.2f ## %s ## %d ## %s-%s ## %s ## %b]", this.id, this.nome, this.cidade, this.capacidade, this.avaliacao,
-		this.tiposCozinha, this.faixaPreco, this.horarioAbertura, this.horarioFechamento, this.dataAbertura, this.aberto);
+		String s = String.format("[%d ## %s ## %s ## %d ## %.2f ## [%s] ## %s ## %s-%s ## %s ## %b]", this.id, this.nome, this.cidade, this.capacidade, this.avaliacao,
+		this.formatarTiposCozinha(this.tiposCozinha), this.formatarFaixaPreco(), this.horarioAbertura.formatar(), this.horarioFechamento.formatar(), this.dataAbertura.formatar(), this.aberto);
 		return s;
 	}
 
-	public String[] separarHoras(String s){
-		String[] str = new String[2];
-		String tmp = "";
-		int indice = 1;	
+	//Métodos auxiliares privados
+	private String[] separarTiposCozinha(String s){
+		int qntTipos = 1;
+		String buffer = "";
+		char c;
+
+		for(int i = 0; i < s.length(); i++){//Verifica a quantos tipos de cozinha o restaurante tem
+			c = s.charAt(i);
+			
+			if(c == ';'){
+				qntTipos++;	
+			}
+		}
+		
+		String[] tipos = new String[qntTipos];
+		int index = 0;
+
+		for(int i = 0; i < s.length(); i++){//Separa cada tipo em um índice de um array
+			c = s.charAt(i);
+			
+			if(c != ';'){
+				buffer += c;
+			}	
+			else{
+				tipos[index] = buffer;
+				index++;
+				buffer = ""; 	
+			}
+		}
+		tipos[index] = buffer;
+		
+		return tipos;
+	}
+	
+	private String formatarTiposCozinha(String[] s){
+		String result = "";		
+
+		for(int i = 0; i < s.length; i++){
+			if(i != (s.length - 1)){
+				result += s[i];
+				result += ',';
+			}
+			else{
+				result += s[i];
+			}
+		}
+		return result;
+	}
+	
+	private String formatarFaixaPreco(){
+		String result = "";
+		
+		for(int i = 0; i < this.faixaPreco; i++){
+			result += '$';
+		}
+
+		return result;
+	}
+
+	private String[] separarHoras(String s){
+		String[] result = new String[2];
+	 	String buffer = "";
+		int index = 0;	
 
 		for(int i = 0; i < s.length(); i++){
 			char c = s.charAt(i);
 			
 			if(c != '-'){
-				tmp += c;		
+				buffer += c;		
 			}
 			else{
-				str[indice] = tmp;
-				indice++;
-				tmp = "";	
+				result[index] = buffer;
+				index++;
+				buffer = "";	
 			}
-			str[indice] = tmp;
 		}
-		return str;	
+		result[index] = buffer;
+		return result;	
 	}
 
 }
@@ -118,29 +189,29 @@ class Hora{
 	public static Hora parseHora(String s){
 		Hora h = new Hora();
 		
-		String tmpHora = "";
-		String tmpMinuto = "";
+		String bufferHora = "";
+		String bufferMinuto = "";
 
 		for(int i = 0; i < s.length(); i++){
 			char c = s.charAt(i);
 			
 			if(c != ':' && i < 2){
-				tmpHora += c;
+				bufferHora += c;
 			}
 			else if(c != ':'){
-				tmpMinuto += c; 
+				bufferMinuto += c; 
 			}
 		}
 		
-		h.hora = Integer.parseInt(tmpHora);
-		h.minuto = Integer.parseInt(tmpMinuto);
+		h.hora = Integer.parseInt(bufferHora);
+		h.minuto = Integer.parseInt(bufferMinuto);
 		
 		return h;
 	}
 	
 	public String formatar(){
-		String s = String.format("%02d:%02d", this.hora, this.minuto);
-		return s;
+		String result = String.format("%02d:%02d", this.hora, this.minuto);
+		return result;
 	}
 }
 
@@ -152,34 +223,34 @@ class Data{
 	public static Data parseData(String s){
 		Data d = new Data();
 
-		String tmpAno = "";
-		String tmpMes = "";
-		String tmpDia = "";
+		String bufferAno = "";
+		String bufferMes = "";
+		String bufferDia = "";
 		
 		for(int i = 0; i < s.length(); i++){
 			char c = s.charAt(i);
 			
 			if(c != '-' && i < 4){
-				tmpAno += c;	
+				bufferAno += c;	
 			}
 			else if(c != '-' && i < 7){
-				tmpMes += c;
+				bufferMes += c;
 			}
 			else if(c != '-'){
-				tmpDia += c;
+				bufferDia += c;
 			}
 		}
 
-			d.ano = Integer.parseInt(tmpAno);
-			d.mes = Integer.parseInt(tmpMes);
-			d.dia = Integer.parseInt(tmpDia);
+			d.ano = Integer.parseInt(bufferAno);
+			d.mes = Integer.parseInt(bufferMes);
+			d.dia = Integer.parseInt(bufferDia);
 
 		return d;
 	}
 
 	public String formatar(){
-		String s = String.format("%02d/%02d/%d", this.dia, this.mes, this.ano);
-		return s;	
+		String result = String.format("%02d/%02d/%d", this.dia, this.mes, this.ano);
+		return result;	
 	}
 }
 
