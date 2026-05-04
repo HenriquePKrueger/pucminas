@@ -1,16 +1,88 @@
 import java.util.*;
+import java.io.File;
 
-//Considerando que essa é a questão de número 1, acabei optando por deixar alguns comentários no código. Esses me ajudam a entender as melhores práticas de programação
+/*
+* Reimplementação da questão anterior com foco em melhoria nas estruturas, visando melhorias no código e aplicação de boas práticas de programação.
+* Alguns métodos e funções comentados foram mantidos para fins de estudo e comparação entre
+ diferentes abordagens.
+*/
 
 public class Q01{
 	public static void main(String args[]){
 		Scanner sc = new Scanner(System.in);
-		
+	
 		while(sc.hasNextLine()){
 			String entrada = sc.nextLine();
 			Restaurante r = Restaurante.parseRestaurante(entrada);
 			System.out.println(r.formatar());
 		}
+	}
+}
+
+class ColecaoRestaurantes{
+	private int tamanho;
+	private Restaurante[] restaurantes;
+
+	public ColecaoRestaurantes(){
+		this.tamanho = 0;
+		this.restaurantes = null;
+	}
+	
+	public ColecaoRestaurantes(int tamanho, Restaurante[] restaurantes){
+		
+	}
+
+	public static ColecaoRestaurantes lerCsv(){//Lê o arquivo, manda para outro método e retorna a coleção
+		String path = "/tmp/restaurantes.csv";
+		ColecaoRestaurantes colecao = new ColecaoRestaurantes();
+		colecao.lerCsv(path);
+
+		return colecao;
+	}
+
+	public void lerCsv(String path){
+		try{
+			Scanner sc = new Scanner(new File(path));
+			restaurantes = new Restaurante[100];
+
+			while(sc.hasNextLine()){
+				this.tamanho++;
+				boolean verificar = false;
+
+				if(this.tamanho == restaurantes.length){
+					Restaurante[] novo = new Restaurante[restaurantes.length+100];
+				
+					for(int i = 0; i < restaurantes.length; i++){
+						novo[i] = restaurantes[i];
+					}
+					
+					restaurantes = novo;
+					verificar = true;
+				}
+
+				String linha = sc.nextLine();
+				
+				if(verificar == false){
+					for(int i = 0; i < restaurantes.length; i++){
+						
+						restaurantes[i] = restaurantes.parseRestaurante(linha);
+					}
+				}
+				else if(verificar == true){
+					for(int i = 0; i < novo.length; i++){
+						novo[i] = novo.parseRestaurante(linha);
+					}
+					
+				}
+			}
+		}
+		catch(Exception e){
+			System.out.println("Erro ao ler o arquivo!");
+		}
+	}
+	
+	public int getTamanho(){
+		return this.tamanho;
 	}
 }
 
@@ -28,7 +100,7 @@ class Restaurante{
 	private boolean aberto;
 	
 	/*
-	*Considerando que a chave de busca é o 'nome' esse não pode ser vazio
+	*Construtor vazio removido para garantir nome obrigatório
 	*public Restaurante(){
 	*	this.nome = "";
 	*}
