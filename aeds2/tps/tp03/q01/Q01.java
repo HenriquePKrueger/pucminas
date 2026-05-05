@@ -42,39 +42,7 @@ class ColecaoRestaurantes{
 
 	public void lerCsv(String path){
 		try{
-			Scanner sc = new Scanner(new File(path));
-			restaurantes = new Restaurante[100];
 
-			while(sc.hasNextLine()){
-				this.tamanho++;
-				boolean verificar = false;
-
-				if(this.tamanho == restaurantes.length){
-					Restaurante[] novo = new Restaurante[restaurantes.length+100];
-				
-					for(int i = 0; i < restaurantes.length; i++){
-						novo[i] = restaurantes[i];
-					}
-					
-					restaurantes = novo;
-					verificar = true;
-				}
-
-				String linha = sc.nextLine();
-				
-				if(verificar == false){
-					for(int i = 0; i < restaurantes.length; i++){
-						
-						restaurantes[i] = restaurantes.parseRestaurante(linha);
-					}
-				}
-				else if(verificar == true){
-					for(int i = 0; i < novo.length; i++){
-						novo[i] = novo.parseRestaurante(linha);
-					}
-					
-				}
-			}
 		}
 		catch(Exception e){
 			System.out.println("Erro ao ler o arquivo!");
@@ -83,6 +51,10 @@ class ColecaoRestaurantes{
 	
 	public int getTamanho(){
 		return this.tamanho;
+	}
+	
+	//Métodos auxiliares privados
+	private void redimensionar(){//vai adicionando mais espaços no array sem passar pelo arquivo 2 vezes
 	}
 }
 
