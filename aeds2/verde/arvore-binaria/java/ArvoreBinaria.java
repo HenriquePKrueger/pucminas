@@ -127,7 +127,7 @@ class Arvore{
 	
 	private void caminharPre(No i){
 		if(i != null){
-			System.out.println(i.elemento + " ");
+			System.out.print(i.elemento + " ");
 			caminharPre(i.esq);
 			caminharPre(i.dir);
 		}
@@ -150,7 +150,7 @@ class Arvore{
 		if(i != null){
 			caminharPos(i.esq);
 			caminharPos(i.dir);
-			System.out.println(i.elemento + " ");
+			System.out.print(i.elemento + " ");
 		}
 	}
 	
