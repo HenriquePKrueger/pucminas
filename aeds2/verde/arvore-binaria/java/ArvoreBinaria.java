@@ -16,92 +16,162 @@ public class ArvoreBinaria{
 		String comando;
 
 		while(sc.hasNext()){
-			comando = sc.nextLine();//pesquisar diferença entre funcoes next
+			comando = sc.next();
 
 			if(comando.equals("I")){
 				int elementoInserir = sc.nextInt();
-				System.out.println(comando);
-				System.out.println(elementoInserir);
-				a.inserirElemento(elementoInserir);
+				a.inserir(elementoInserir);
+			}
+			else if(comando.equals("P")){
+				int elementoPesquisar = sc.nextInt();
+				System.out.print(a.pesquisar(elementoPesquisar) ? "S" : "N");
+				System.out.println();
+			}
+			else if(comando.equals("PRE")){
+				a.caminharPre();
+			}
+			else if(comando.equals("POS")){
+				a.caminharPos();
 			}
 			else if(comando.equals("EM")){
-				a.exibirEmOrdem();
+				a.caminharCentral();
 			}
 		}
 	}
 }
 
 class No{
-	private int elemento;
-	private No direita;
-	private No esquerda;
+	public int elemento;
+	public No dir;
+	public No esq;
 
 	public No(int elemento){
 		this.elemento = elemento;
-		this.direita = null;
-		this.esquerda = null;
+		this.dir = null;
+		this.esq = null;
 	}
-
-	public int getElemento(){
-		return this.elemento;
-	}
-
-	public No getDireita(){
-		return this.direita;
-	}
-
-	public void setDireita(No direita){
-		this.direita = direita;
-	}
-
-	public No getEsquerda(){
-		return this.esquerda;
-	}
-
-	public void setEsquerda(No esquerda){
-		this.esquerda = esquerda;
-	}
-
-
 }
 
 class Arvore{
-	private No raiz;
+	public No raiz;
 
-	public Arvore(){//Cria a estrutura inicial e inicializa a raiz como "null"
+	public Arvore(){
 		this.raiz = null;
 	}
-	
-	public void inserirElemento(int elementoInserir){
-		this.raiz = inserirRecursivo(elementoInserir, this.raiz);
+
+	// =========================
+	// Inserir elemento
+	// =========================	
+	public void inserir(int elementoInserir){
+		this.raiz = inserir(elementoInserir, this.raiz);
 	}
 	
-	private No inserirRecursivo(int elementoInserir, No i){//Private por que é chamado somente pelo método "inserirElemento"
+	private No inserir(int elementoInserir, No i){//Private por que é chamado somente pelo método "inserir"
 		if(i == null){
 			i = new No(elementoInserir);
 		}
-		else if(elementoInserir > i.getElemento()){
-			i.setDireita(inserirRecursivo(elementoInserir, i.getDireita()));
+		else if(elementoInserir < i.elemento){
+			i.esq = inserir(elementoInserir, i.esq);
 		}
 		else{
-			i.setEsquerda(inserirRecursivo(elementoInserir, i.getEsquerda()));
+			i.dir = inserir(elementoInserir, i.dir);
 		}
-
 		return i;
 	}
 
-	public void exibirEmOrdem(){
-		emOrdemRecursivo(this.raiz);
-	}
-
-	private void emOrdemRecursivo(No i){
-		if(i != null){
-			emOrdemRecursivo(i.getEsquerda());
-			System.out.println(i.getElemento());
-			emOrdemRecursivo(i.getDireita());
+	// =========================
+	// Pesquisar elemento
+	// =========================
+	public boolean pesquisar(int elementoPesquisar){
+		if(this.raiz == null){
+			return false;
 		}
 		else{
+			return pesquisar(elementoPesquisar, this.raiz);
+		}
+	}
+
+	private boolean pesquisar(int elementoPesquisar, No i){
+		boolean resp = false;
+		
+		if(i == null){
+			resp = false;
+		}
+		else if(i.elemento == elementoPesquisar){
+			System.out.print(i.elemento + " ");
+			resp = true;
+		}
+		else if(i.elemento > elementoPesquisar){
+			System.out.print(i.elemento + " ");
+			resp = pesquisar(elementoPesquisar, i.esq);	
+		}
+		else{
+			System.out.print(i.elemento + " ");
+			resp = pesquisar(elementoPesquisar, i.dir);
+		}
+		return resp;
+	}
+
+	// =========================
+	// Caminhar Pré-ordem
+	// =========================
+	public void caminharPre(){
+		if(this.raiz == null){
 			System.out.println("V");
+		}
+		else{
+			caminharPre(this.raiz);
+			System.out.println();
+		}
+	}
+	
+	private void caminharPre(No i){
+		if(i != null){
+			System.out.println(i.elemento + " ");
+			caminharPre(i.esq);
+			caminharPre(i.dir);
+		}
+	}
+	
+	// =========================
+	// Caminhar Pós-ordem
+	// =========================
+	public void caminharPos(){
+		if(this.raiz == null){
+			System.out.println("V");
+		}
+		else{
+			caminharPos(this.raiz);
+			System.out.println();
+		}
+	}
+
+	private void caminharPos(No i){
+		if(i != null){
+			caminharPos(i.esq);
+			caminharPos(i.dir);
+			System.out.println(i.elemento + " ");
+		}
+	}
+	
+	// =========================
+	// Caminhar Em-ordem
+	// =========================	
+	public void caminharCentral(){
+		if(this.raiz == null){
+			System.out.println("V");
+		}
+		else{
+			caminharCentral(this.raiz);
+			System.out.println();
+		}
+	}
+
+	private void caminharCentral(No i){
+		if(i != null){
+			caminharCentral(i.esq);
+			System.out.print(i.elemento + " ");
+			caminharCentral(i.dir);
 		}
 	}
 }
