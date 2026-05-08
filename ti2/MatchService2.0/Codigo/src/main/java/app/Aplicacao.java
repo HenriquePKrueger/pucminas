@@ -133,6 +133,16 @@ public class Aplicacao {
 		    return null;
 		});
 		
+		//Chama o ftl criado para a pesquisa
+		get("/pesquisa", (req, res) -> {
+			Map<String, Object> model = getModel(req);
+			
+			model.put("erro", req.session().attribute("erro"));
+			req.session().removeAttribute("erro");
+			
+			return render(model, "pesquisa/index.ftl");
+        });
+		
 		get("/about", (req, res) -> {
 			Map<String, Object> model = getModel(req);
 			

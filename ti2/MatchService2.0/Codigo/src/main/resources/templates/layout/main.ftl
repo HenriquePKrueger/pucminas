@@ -64,7 +64,7 @@
                         <a class="nav-link text-white" href="/prestadores">Prestadores</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="/pesquisa">Pesquisa Avançadaa</a>
+                        <a class="nav-link text-white" href="/pesquisa">Pesquisa Avançada</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="/about">Sobre nós</a>
