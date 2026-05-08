@@ -22,10 +22,11 @@ public class PesquisaDAO extends DAO {
 	    List<Prestador> lista = new java.util.ArrayList<>();
 	    
 	    StringBuilder sql = new StringBuilder();
-	    sql.append("SELECT p.*, u.nome, u.cidade, u.genero ");
+	    sql.append("SELECT p.id, p.descricao, p.usuarios_id, u.nome AS nome_usuario, c.nome AS nome_categoria ");
 	    sql.append("FROM prestadores p ");
 	    sql.append("JOIN usuarios u ON p.usuarios_id = u.id ");
-	    sql.append("JOIN prestadores_categorias pc ON p.id = pc.prestadores_id ");
+	    sql.append("LEFT JOIN prestadores_categorias pc ON p.id = pc.prestadores_id ");
+	    sql.append("LEFT JOIN categorias c ON pc.categorias_id = c.id ");
 	    sql.append("WHERE 1=1 ");
 
 	    if (idCategoria > 0) sql.append("AND pc.categorias_id = ? ");
@@ -44,7 +45,9 @@ public class PesquisaDAO extends DAO {
 	                p.setId(rs.getLong("id"));
 	                p.setDescricao(rs.getString("descricao"));
 	                p.setUsuariosId(rs.getLong("usuarios_id"));
-
+	                p.setNomeUsuario(rs.getString("nome_usuario"));
+	                p.setNomeCategoria(rs.getString("nome_categoria"));
+	                
 	                lista.add(p);
 	            }
 	        }

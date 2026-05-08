@@ -1,6 +1,8 @@
 package app;
 
 import static spark.Spark.*;
+
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
@@ -9,6 +11,7 @@ import javax.servlet.MultipartConfigElement;
 
 import com.google.gson.Gson;
 
+import dao.PesquisaDAO;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
 import model.Usuario;
@@ -135,12 +138,25 @@ public class Aplicacao {
 		
 		//Chama o ftl criado para a pesquisa
 		get("/pesquisa", (req, res) -> {
-			
 			Map<String, Object> model = getModel(req);
+			PesquisaDAO pesquisaDAO = new PesquisaDAO();
 			
 			model.put("categorias", categoriaService.obterCategorias());
-			model.put("erro", req.session().attribute("erro"));
-			req.session().removeAttribute("erro");
+			
+			String idCatStr = req.queryParams("idCategoria");
+		    String cidade = req.queryParams("cidade");
+		    String genero = req.queryParams("genero");
+		    
+		    
+		    if (req.queryParams().size() > 0) {
+		        int idCategoria = (idCatStr != null && !idCatStr.isEmpty()) ? Integer.parseInt(idCatStr) : 0;
+		        String cidadeFiltro = (cidade != null && !cidade.isEmpty()) ? cidade : null;
+		        String generoFiltro = (genero != null && !genero.isEmpty()) ? genero : null;
+
+		        List<model.Prestador> resultados = pesquisaDAO.filtrarPrestadores(idCategoria, cidadeFiltro, generoFiltro);
+		        model.put("prestadores", resultados);
+		        model.put("buscaFeita", true);
+		    }
 			
 			return render(model, "pesquisa/index.ftl");
         });
