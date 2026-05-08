@@ -41,8 +41,27 @@ void inserir(struct ArvoreBinaria* arvore, int elementoInserir){
 // =========================
 // Pesquisar
 // =========================
-int pesquisarRec(){
-	return 1;
+int pesquisarRec(struct No* i, int elementoPesquisar){
+	int resp = 0;
+
+	if(i == NULL){
+		resp = 0;
+	}
+	else if(i->elemento == elementoPesquisar){
+		printf("%d ", i->elemento);
+		resp = 1;
+	}
+	else if(i->elemento > elementoPesquisar){
+		printf("%d ", i->elemento);
+		resp = pesquisarRec(i->esq, elementoPesquisar);
+	}
+	else{
+		printf("%d ", i->elemento);
+		resp = pesquisarRec(i->dir, elementoPesquisar);
+	}
+
+	
+	return resp;
 }
 
 void pesquisar(struct ArvoreBinaria* arvore, int elementoPesquisar){
@@ -65,7 +84,7 @@ void caminharPreOrdem(struct ArvoreBinaria* arvore){
 		caminharPreRec(arvore->raiz);
 	}
 	else{
-		printf("V\n");
+		printf("V");
 	}
 }
 
@@ -85,7 +104,7 @@ void caminharPosOrdem(struct ArvoreBinaria* arvore){
 		caminharPosRec(arvore->raiz);
 	}
 	else{
-		printf("V\n");
+		printf("V");
 	}
 }
 
@@ -105,7 +124,7 @@ void caminharCentral(struct ArvoreBinaria* arvore){
 		caminharCentralRec(arvore->raiz);
 	}
 	else{
-		printf("V\n");
+		printf("V");
 	}
 }
 
