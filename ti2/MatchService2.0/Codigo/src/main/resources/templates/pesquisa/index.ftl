@@ -9,10 +9,12 @@
     
     <form action="/pesquisar" method="GET">
         <label>Tipo de Serviço:</label>
-        <select name="servico">
-            <option value="encanamento">Encanamento</option>
-            <option value="reparos">Reparos de Móveis</option>
-        </select>
+  	<select name="idCategoria" id="idCategoria">
+    	<option value="">Selecione uma categoria...</option>
+    	<#list categorias as cat>
+       		<option value="${cat.id}">${cat.nome}</option>
+    	</#list>
+	</select>
 
         <label>Localização:</label>
         <input type="text" name="localizacao" placeholder="Ex: Belo Horizonte">

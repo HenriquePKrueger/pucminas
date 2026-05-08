@@ -135,8 +135,10 @@ public class Aplicacao {
 		
 		//Chama o ftl criado para a pesquisa
 		get("/pesquisa", (req, res) -> {
+			
 			Map<String, Object> model = getModel(req);
 			
+			model.put("categorias", categoriaService.obterCategorias());
 			model.put("erro", req.session().attribute("erro"));
 			req.session().removeAttribute("erro");
 			
