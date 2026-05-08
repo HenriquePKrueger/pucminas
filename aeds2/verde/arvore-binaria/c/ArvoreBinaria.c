@@ -39,7 +39,18 @@ void inserir(struct ArvoreBinaria* arvore, int elementoInserir){
 }
 
 // =========================
-// Exibir Pre-ordem
+// Pesquisar
+// =========================
+int pesquisarRec(){
+	return 1;
+}
+
+void pesquisar(struct ArvoreBinaria* arvore, int elementoPesquisar){
+	printf("%s\n", pesquisarRec(arvore->raiz, elementoPesquisar) ? "S" : "N");
+}
+
+// =========================
+// Caminhar Pré-ordem
 // =========================
 void caminharPreRec(struct No* i){
 	if(i != NULL){
@@ -59,7 +70,27 @@ void caminharPreOrdem(struct ArvoreBinaria* arvore){
 }
 
 // =========================
-// Exibir Em-ordem
+// Caminhar Pós-ordem
+// =========================
+void caminharPosRec(struct No* i){
+	if(i != NULL){
+		caminharPosRec(i->esq);
+		caminharPosRec(i->dir);
+		printf("%d ", i->elemento);
+	}
+}
+
+void caminharPosOrdem(struct ArvoreBinaria* arvore){
+	if(arvore->raiz != NULL){
+		caminharPosRec(arvore->raiz);
+	}
+	else{
+		printf("V\n");
+	}
+}
+
+// =========================
+// Caminhar Em-ordem
 // =========================
 void caminharCentralRec(struct No* i){
 	if(i != NULL){
@@ -76,8 +107,11 @@ void caminharCentral(struct ArvoreBinaria* arvore){
 	else{
 		printf("V\n");
 	}
-} 
+}
 
+// =========================
+// Main
+// =========================
 int main(){
 	struct ArvoreBinaria arvore;
 	char comando[10];
@@ -96,6 +130,15 @@ int main(){
 		else if(strcmp(comando, "PRE") == 0){
 			caminharPreOrdem(&arvore);
 			printf("\n");
+		}
+		else if(strcmp(comando, "POS") == 0){
+			caminharPosOrdem(&arvore);
+			printf("\n");
+		}
+		else if(strcmp(comando, "P") == 0){
+			int elementoPesquisar;
+			scanf("%d", &elementoPesquisar);
+			pesquisar(&arvore, elementoPesquisar);
 		}
 	}
 }
