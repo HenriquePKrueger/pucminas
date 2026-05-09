@@ -1,20 +1,18 @@
 import java.util.*;
-import java.io.File;
+import java.io.*;
 
 /*
-* Reimplementação da questão anterior com foco em melhoria nas estruturas, visando melhorias no código e aplicação de boas práticas de programação.
+* Reimplementação do UML com foco em melhoria das estruturas, visando melhorias no código e aplicação de boas práticas de programação.
 * Alguns métodos e funções comentados foram mantidos para fins de estudo e comparação entre
  diferentes abordagens.
 */
 
 public class Q01{
 	public static void main(String args[]){
-		Scanner sc = new Scanner(System.in);
-	
-		while(sc.hasNextLine()){
-			String entrada = sc.nextLine();
-			Restaurante r = Restaurante.parseRestaurante(entrada);
-			System.out.println(r.formatar());
+		ColecaoRestaurantes c = ColecaoRestaurantes.lerCsv();
+
+		for(int i = 0; i < c.getTamanho(); i++){
+			System.out.println(c.getRestaurante()[i].formatar());
 		}
 	}
 }
@@ -32,20 +30,36 @@ class ColecaoRestaurantes{
 		
 	}
 
-	public static ColecaoRestaurantes lerCsv(){//Lê o arquivo, manda para outro método e retorna a coleção
-		String path = "/tmp/restaurantes.csv";
+	public static ColecaoRestaurantes lerCsv(){//Manda o caminho do arquivo para o lerCsv e retorna a coleção para a main
 		ColecaoRestaurantes colecao = new ColecaoRestaurantes();
-		colecao.lerCsv(path);
+		colecao.lerCsv("/tmp/restaurantes.csv");
 
 		return colecao;
 	}
 
 	public void lerCsv(String path){
 		try{
+			File arquivo = new File(path);
+			Scanner lerLinhas = new Scanner(arquivo);
 
+			this.restaurantes = new Restaurante[10];//Tamanho inicial arbitrário
+			
+			lerLinhas.nextLine();
+			while(lerLinhas.hasNextLine()){
+				String linha = lerLinhas.nextLine();
+				
+				if(this.tamanho == this.restaurantes.length){//verifica se o array criado anteriormente está cheio
+					restaurantes = redimensionar();
+				}
+				
+				this.restaurantes[this.tamanho] = Restaurante.parseRestaurante(linha);
+				this.tamanho++;
+			}
+			lerLinhas.close();
 		}
 		catch(Exception e){
 			System.out.println("Erro ao ler o arquivo!");
+			e.printStackTrace();
 		}
 	}
 	
@@ -53,8 +67,19 @@ class ColecaoRestaurantes{
 		return this.tamanho;
 	}
 	
+	public Restaurante[] getRestaurante(){
+		return this.restaurantes;
+	}
+	
 	//Métodos auxiliares privados
-	private void redimensionar(){//vai adicionando mais espaços no array sem passar pelo arquivo 2 vezes
+	private Restaurante[] redimensionar(){//Redimensionamento dinâmico
+		Restaurante[] novo = new Restaurante[this.restaurantes.length * 2];//Cria um novo array com o dobro do tamanho do anterior
+
+		for(int i = 0; i < this.restaurantes.length; i++){
+			novo[i] = this.restaurantes[i];//Preenche o novo array com os dados do array anterior
+		}
+	
+		return novo;	
 	}
 }
 
@@ -78,7 +103,7 @@ class Restaurante{
 	*}
 	*/
 
-	public Restaurante(String nome){//Já que o 'nome' não pode ser vazio, o construtor dispara uma excessão se receber esse atributo vazio 
+	public Restaurante(String nome){//Já que o 'nome' não pode ser vazio, o construtor dispara uma excessão se recebê-lo vazio 
 		if(nome == null || nome.isEmpty()){
 			throw new IllegalArgumentException("Nome obrigatorio!");
 		}
