@@ -1,100 +1,104 @@
 import java.util.*;
 import java.io.*;
 
-/*
-* Reimplementação do UML com foco em melhoria das estruturas, visando melhorias no código e aplicação de boas práticas de programação.
-* Alguns métodos e funções comentados foram mantidos para fins de estudo e comparação entre
- diferentes abordagens.
-*/
-
-public class Q01{
-	
-	static int comparacoes = 0;
-	static int movimentacoes = 0;
-
+public class Q06{
 	public static void main(String args[]) throws Exception{
 		Scanner sc = new Scanner(System.in);
-		//ColecaoRestaurantes c = ColecaoRestaurantes.lerCsv();
-		//int k = 10;
-		
-		int[] idsBusca = new int[10];
-		int qntIds = 0;
-
-		int id;
-		while((id = sc.nextInt()) != -1){
-			if(qntIds == idsBusca.length){
-				idsBusca = redimensionar(idsBusca);
-			}
-			idsBusca[qntIds] = id;
-			qntIds++;
-		}
-		sc.close();	
-		
 		ColecaoRestaurantes c = ColecaoRestaurantes.lerCsv();
-		Restaurante[] rest = c.separarPorIds(idsBusca, qntIds);		
 
-		long inicio = System.currentTimeMillis();//Inicia o contador
-                Ordenacao ordenado = new Ordenacao();
-		Restaurante[] resultado = ordenado.selecao(rest);
-                long fim = System.currentTimeMillis();//finaliza o contador
+		//for(int i = 0; i < c.getTamanho(); i++){
+		//	System.out.println(c.getRestaurante()[i].formatar());
+		//}
+			
+		PilhaSequencial pilha = new PilhaSequencial(c.getTamanho());				
 
-		double tempoTotal = (fim - inicio) / 1000.0;//Converter para segundos
-
-		for(int i = 0; i < qntIds; i++){
-			System.out.println(resultado[i].formatar());
-		}
-
-		PrintWriter log = new PrintWriter(new FileWriter("899683_selecao.txt"));
-		log.printf("899683\t%d\t%d\t%f", Q01.comparacoes, Q01.movimentacoes, tempoTotal);
-		log.close();
-	}
+		//Parte 1
+		int id = sc.nextInt();
+		while(id != -1){
+			for(int i = 0; i < c.getTamanho(); i++){
+				if(c.getRestaurante()[i].getId() == id){
+					pilha.inserir(c.getRestaurante()[i]);
+				}
+			}	
 		
-	//Método auxiliar privado
-	private static int[] redimensionar(int[] idsBusca){//Redimensionamento dinâmico
-		int[] novo = new int[idsBusca.length * 2];//Cria um novo array com o dobro do tamanho do anterior
- 
-            	for(int i = 0; i < idsBusca.length; i++){
-                         novo[i] = idsBusca[i];//Preenche o novo array com os dados do array anterior
-                 }
- 
-                 return novo;
-         }
-	
-}
-
-class Ordenacao{//Ordenar pela chave "nome"
-	private int k = 10;
-
-	public Restaurante[] selecao(Restaurante[] restaurantes){
-		int i;
-		int j;		
-
-		for(i = 0; i < this.k; i++){
-			int menor = i;
-					
-			for(j = i + 1; j < restaurantes.length; j++){
-				Q01.comparacoes++;
-				if(restaurantes[j].getNome().compareTo(restaurantes[menor].getNome()) < 0){
-					menor = j;
+			id = sc.nextInt();
+		}
+		
+		//Parte 2
+		int qntRegistros = sc.nextInt();
+		for(int i = 0; i < qntRegistros; i++){
+			String comando = sc.next();
+			
+			if(comando.equals("I")){
+				id = sc.nextInt();
+			
+				for(int j = 0; j < c.getTamanho(); j++){
+					if(c.getRestaurante()[j].getId() == id){
+						pilha.inserir(c.getRestaurante()[j]);
+					}
 				}
 			}
-			swap(restaurantes, menor, i);
-			Q01.movimentacoes += 3;
+			if(comando.equals("R")){
+				System.out.println("(R)" + pilha.remover().getNome());
+			}
 		}
-		return restaurantes;
+		
+		for(int i = 0; i < pilha.getTopo(); i++){
+			System.out.println(pilha.getRestaurantes()[i].formatar());
+		}	
+	}	
+}
+
+//Lista Sequencial
+class PilhaSequencial{
+	private Restaurante[] restaurantes;
+	private int topo;
+
+	public PilhaSequencial(int tamanho){
+		this.restaurantes = new Restaurante[tamanho];//Cria um array de Restaurantes com o tamanho da coleção
+		this.topo = 0;
 	}
 
-	private void swap(Restaurante[] restaurantes, int menor, int i){
-		Restaurante temp = restaurantes[menor];
-		restaurantes[menor] = restaurantes[i];
-		restaurantes[i] = temp;
+	public void inserir(Restaurante restaurante) throws Exception{//Insere um novo elemento na posição informada
+		if(topo >= restaurantes.length){
+			throw new Exception("Erro!");
+		}
+		
+		this.restaurantes[topo] = restaurante;
+		topo++;
 	}
+
+	public Restaurante remover() throws Exception{
+		if(topo == 0){
+			throw new Exception("Erro!");
+		}
+		
+		return restaurantes[--topo];
+	}
+
+	//Gets e sets
+	public Restaurante[] getRestaurantes(){
+		return this.restaurantes;
+	}
+
+	public int getTopo(){
+		return this.topo;
+	}
+	
 }
 
 class ColecaoRestaurantes{
 	private int tamanho;
 	private Restaurante[] restaurantes;
-	private Restaurante[] buscaPorIds;
+
+	public ColecaoRestaurantes(){
+		this.tamanho = 0;
+		this.restaurantes = null;
+	}
+	
+	public ColecaoRestaurantes(int tamanho, Restaurante[] restaurantes){
+		
+	}
 
 	public static ColecaoRestaurantes lerCsv(){//Manda o caminho do arquivo para o lerCsv e retorna a coleção para a main
 		ColecaoRestaurantes colecao = new ColecaoRestaurantes();
@@ -117,6 +121,7 @@ class ColecaoRestaurantes{
 				if(this.tamanho == this.restaurantes.length){//verifica se o array criado anteriormente está cheio
 					restaurantes = redimensionar();
 				}
+				
 				this.restaurantes[this.tamanho] = Restaurante.parseRestaurante(linha);
 				this.tamanho++;
 			}
@@ -128,25 +133,7 @@ class ColecaoRestaurantes{
 		}
 	}
 	
-	public Restaurante[] separarPorIds(int[] idsBusca, int qntIds){
-		Restaurante[] results = new Restaurante[qntIds];
-		int index = 0;			
-
-		for(int i = 0; i < qntIds; i++){
-			int atual = idsBusca[i];
-		
-			for(int j = 0; j < this.tamanho; j++){
-				if(atual == this.restaurantes[j].getId()){
-					results[index] = restaurantes[j];	
-					index++;	
-				}
-			}
-		}
-		
-		return results;
-	}
-
-	//Gets e Sets
+	//Gets e sets
 	public int getTamanho(){
 		return this.tamanho;
 	}
@@ -156,15 +143,15 @@ class ColecaoRestaurantes{
 	}
 	
 	//Métodos auxiliares privados
-        private Restaurante[] redimensionar(){//Redimensionamento dinâmico
-		Restaurante[] novo = new Restaurante[restaurantes.length * 2];//Cria um novo array com o dobro do tamanho do anterior
- 
-                for(int i = 0; i < this.restaurantes.length; i++){
-                	novo[i] = this.restaurantes[i];//Preenche o novo array com os dados do array anterior
-                }
+	private Restaurante[] redimensionar(){//Redimensionamento dinâmico
+		Restaurante[] novo = new Restaurante[this.restaurantes.length * 2];//Cria um novo array com o dobro do tamanho do anterior
 
-               	return novo;
-          } 
+		for(int i = 0; i < this.restaurantes.length; i++){
+			novo[i] = this.restaurantes[i];//Preenche o novo array com os dados do array anterior
+		}
+	
+		return novo;	
+	}
 }
 
 class Restaurante{
@@ -248,18 +235,18 @@ class Restaurante{
 	}
 
 	public String formatar(){
-		String s = String.format("[%d ## %s ## %s ## %d ## %.1f ## [%s] ## %s ## %s-%s ## %s ## %b]", this.id, this.nome, this.cidade, this.capacidade, this.avaliacao,
+		String s = String.format("[%d ## %s ## %s ## %d ## %.2f ## [%s] ## %s ## %s-%s ## %s ## %b]", this.id, this.nome, this.cidade, this.capacidade, this.avaliacao,
 		this.formatarTiposCozinha(this.tiposCozinha), this.formatarFaixaPreco(), this.horarioAbertura.formatar(), this.horarioFechamento.formatar(), this.dataAbertura.formatar(), this.aberto);
 		return s;
 	}
 
 	//Gets e sets
-	public String getNome(){
-		return this.nome;
+	public int getId(){
+		return this.id;
 	}
 	
-	public int getId(){
-		return this.id;	
+	public String getNome(){
+		return this.nome;
 	}
 
 	//Métodos auxiliares privados

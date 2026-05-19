@@ -7,7 +7,7 @@ import java.io.*;
  diferentes abordagens.
 */
 
-public class Q01{
+public class Q02{
 	
 	static int comparacoes = 0;
 	static int movimentacoes = 0;
@@ -35,7 +35,7 @@ public class Q01{
 
 		long inicio = System.currentTimeMillis();//Inicia o contador
                 Ordenacao ordenado = new Ordenacao();
-		Restaurante[] resultado = ordenado.selecao(rest);
+		Restaurante[] resultado = ordenado.quicksort(rest);
                 long fim = System.currentTimeMillis();//finaliza o contador
 
 		double tempoTotal = (fim - inicio) / 1000.0;//Converter para segundos
@@ -44,8 +44,8 @@ public class Q01{
 			System.out.println(resultado[i].formatar());
 		}
 
-		PrintWriter log = new PrintWriter(new FileWriter("899683_selecao.txt"));
-		log.printf("899683\t%d\t%d\t%f", Q01.comparacoes, Q01.movimentacoes, tempoTotal);
+		PrintWriter log = new PrintWriter(new FileWriter("899683_quicksort.txt"));
+		log.printf("899683\t%d\t%d\t%f", Q02.comparacoes, Q02.movimentacoes, tempoTotal);
 		log.close();
 	}
 		
@@ -65,23 +65,50 @@ public class Q01{
 class Ordenacao{//Ordenar pela chave "nome"
 	private int k = 10;
 
-	public Restaurante[] selecao(Restaurante[] restaurantes){
-		int i;
-		int j;		
+	private int comparar(Restaurante a, Restaurante b){
 
-		for(i = 0; i < this.k; i++){
-			int menor = i;
-					
-			for(j = i + 1; j < restaurantes.length; j++){
-				Q01.comparacoes++;
-				if(restaurantes[j].getNome().compareTo(restaurantes[menor].getNome()) < 0){
-					menor = j;
-				}
+        	if(a.getAvaliacao() < b.getAvaliacao()){
+            		return -1;
+       		 }
+
+        	if(a.getAvaliacao() > b.getAvaliacao()){
+            		return 1;
+        	}
+        	return a.getNome().compareTo(b.getNome());
+	}
+	
+	public Restaurante[] quicksort(Restaurante[] restaurantes){
+			quicksortParcial(restaurantes, 0, restaurantes.length - 1);
+			return restaurantes;
+	}
+
+	public void quicksortParcial(Restaurante[] restaurantes, int esq, int dir){
+		int i = esq;
+		int j = dir;
+		Restaurante pivo = restaurantes[(esq + dir) / 2];
+		
+		while(i <= j){
+			while(comparar(restaurantes[i], pivo) < 0){
+				i++;
+				Q02.comparacoes++;
 			}
-			swap(restaurantes, menor, i);
-			Q01.movimentacoes += 3;
+			while(comparar(restaurantes[j], pivo) > 0){
+				j--;
+				Q02.comparacoes++;
+			}
+			if(i <= j){
+				swap(restaurantes, i, j);
+				Q02.movimentacoes += 3;
+				i++;
+				j--;
+			}
 		}
-		return restaurantes;
+		if(esq < j && esq < k){
+			quicksortParcial(restaurantes, esq, j);
+		}
+		if(i < k && i < dir){
+			quicksortParcial(restaurantes, i, dir);
+		}
 	}
 
 	private void swap(Restaurante[] restaurantes, int menor, int i){
@@ -132,12 +159,12 @@ class ColecaoRestaurantes{
 		Restaurante[] results = new Restaurante[qntIds];
 		int index = 0;			
 
-		for(int i = 0; i < qntIds; i++){
-			int atual = idsBusca[i];
+		for(int i = 0; i < this.tamanho; i++){
+			int atual = this.restaurantes[i].getId();
 		
-			for(int j = 0; j < this.tamanho; j++){
-				if(atual == this.restaurantes[j].getId()){
-					results[index] = restaurantes[j];	
+			for(int j = 0; j < qntIds; j++){
+				if(idsBusca[j] == atual){
+					results[index] = this.restaurantes[i];	
 					index++;	
 				}
 			}
@@ -260,6 +287,10 @@ class Restaurante{
 	
 	public int getId(){
 		return this.id;	
+	}
+
+	public double getAvaliacao(){
+		return this.avaliacao;
 	}
 
 	//Métodos auxiliares privados
